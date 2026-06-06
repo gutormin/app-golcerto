@@ -1,0 +1,1260 @@
+import json
+
+log_path = r'C:\Users\Gustavo\.gemini\antigravity\brain\bd24e051-143e-4678-bb61-92d1d310912f\.system_generated\logs\transcript.jsonl'
+
+with open(log_path, 'r', encoding='utf-8', errors='ignore') as f:
+    for idx, line in enumerate(f):
+        if 800 < idx < 950 and ('REAL_NEWS_CACHE' in line or 'update_all_news_cache' in line):
+            try:
+                data = json.loads(line)
+                step = data.get('step_index', idx)
+                def find_strings(obj):
+                    if isinstance(obj, str):
+                        if 'REAL_NEWS_CACHE' in obj or 'update_all_news_cache' in obj:
+                            return obj
+                    elif isinstance(obj, dict):
+                        for k, v in obj.items():
+                            res = find_strings(v)
+                            if res:
+                                return res
+                    elif isinstance(obj, list):
+                        for item in obj:
+                            res = find_strings(item)
+                            if res:
+                                return res
+                    return None
+                
+                impl = find_strings(data)
+                if impl and len(impl) > 100:
+                    print(f"FOUND ON LINE {idx}, STEP {step}:")
+                    print(impl[:1500])
+                    print("===================================\n")
+            except Exception as e:
+                pass
+
+
+  - [x] Converter a aba de Perfil/Meu Bolão em uma página elegante de Assinatura Premium com o card de R$19,90 e benefícios
+  - [x] Corrigir funções do Javascript para evitar erros decorrentes dos elementos de bolão removidos
+- [x] **Dados Reais e Atualizações em Tempo Real (Scraper de Notícias e Resultados Reais)**
+  - [x] Criar rotina assíncrona no backend para buscar notícias reais via RSS do Google News para as 48 seleções
+  - [x] Criar banco de dados de últimos resultados reais dos amistosos e qualificatórias das seleções
+  - [x] Integrar cache em memória atualizado a cada 30 minutos para manter o app rápido
+
+    renderFilteredMatches();
+        </div>
+      </div>
+      
+      <button onclick="handleSubscribe()" style="width: 100%; background: var(--gold); color: #000; border: none; border-radius: 8px; padding: 15px; font-weight: bold; font-size: 15px; cursor: pointer; transition: all 0.2s; font-family: inherit; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 15px rgba(197, 168, 92, 0.4);">
+        Assinar agora — R$19,90 🚀
+      </button>
+    </div>
+
+    <!-- VALUE PROPOSITION / FAQ -->
+    <div style="margin-top: 24px; display: flex; flex-direction: column; gap: 16px;">
+      <div style="font-size: 14px; font-weight: bold; color: #fff; border-left: 3px solid var(--gold); padding-left: 8px;">Por que ser Premium?</div>
+      
+      <div style="background: rgba(255,255,255,0.01); border: 1px solid rgba(255,255,255,0.04); border-radius: 8px; padding: 14px; font-size: 12px; line-height: 1.5; color: var(--text2);">
+        <strong style="color:#fff; display:block; margin-bottom:4px;">🎯 Mais acertos nas suas apostas ou bolões</strong>
+        Utilize a matemática avançada de probabilidades ao seu favor. O modelo Dixon-Coles analisa a força real de ataque e defesa histórica e recente de cada seleção para extrair padrões invisíveis.
+      </div>
+
+      <div style="background: rgba(255,255,255,0.01); border: 1px solid rgba(255,255,255,0.04); border-radius: 8px; padding: 14px; font-size: 12px; line-height: 1.5; color: var(--text2);">
+        <strong style="color:#fff; display:block; margin-bottom:4px;">📲 Receba notificações de valor instantâneas</strong>
+        Sempre que um jogador importante se machucar ou as odds oscilarem de forma atípica, você receberá alertas direto no seu celular para atualizar suas previsões antes do jogo começar.
+      </div>
+    </div>
+  </div>
+</div>
+
+
+  * Implementamos um sistema que audita os palpites sugeridos pela própria IA confrontando-os com os resultados reais das partidas concluídas:
+    * **Placar Exato**: +5 pontos (acertou gols exatos de ambos).
+  // GRUPO K
+  {home:'Portugal',    away:'Congo DR',       group:'K', date:'17/06', time:'14:00', venue:'NRG Stadium · Houston',       oh:1.30, od:4.50, oa:9.00},
+  {home:'Uzbekistan',  away:'Colombia',       group:'K', date:'17/06', time:'23:00', venue:'Azteca · Cidade do México',   oh:3.80, od:3.10, oa:1.90},
+  {home:'Portugal',    away:'Uzbekistan',     group:'K', date:'23/06', time:'14:00', venue:'NRG Stadium · Houston',       oh:1.25, od:5.00, oa:10.0},
+  {home:'Colombia',    away:'Congo DR',       group:'K', date:'23/06', time:'23:00', venue:'Estadio Akron · Guadalajara', oh:1.65, od:3.60, oa:5.00},
+  {home:'Colombia',    away:'Portugal',       group:'K', date:'27/06', time:'20:30', venue:'Hard Rock · Miami',           oh:3.80, od:3.20, oa:1.90},
+  {home:'Congo DR',    away:'Uzbekistan',     group:'K', date:'27/06', time:'20:30', venue:'Mercedes-Benz · Atlanta',    oh:1.90, od:3.40, oa:3.80},
+  // GRUPO L
+    {'home': 'Uzbekistan', 'away': 'Colombia', 'group': 'K', 'date': '17/06', 'time': '23:00', 'venue': 'Azteca · Cidade do México', 'oh': 3.8, 'od': 3.1, 'oa': 1.9},
+    {'home': 'Portugal', 'away': 'Uzbekistan', 'group': 'K', 'date': '23/06', 'time': '14:00', 'venue': 'NRG Stadium · Houston', 'oh': 1.25, 'od': 5.0, 'oa': 10.0},
+    {'home': 'Colombia', 'away': 'Congo DR', 'group': 'K', 'date': '23/06', 'time': '23:00', 'venue': 'Estadio Akron · Guadalajara', 'oh': 1.65, 'od': 3.6, 'oa': 5.0},
+    {'home': 'Colombia', 'away': 'Portugal', 'group': 'K', 'date': '27/06', 'time': '20:30', 'venue': 'Hard Rock · Miami', 'oh': 3.8, 'od': 3.2, 'oa': 1.9},
+    {'home': 'Congo DR', 'away': 'Uzbekistan', 'group': 'K', 'date': '27/06', 'time': '20:30', 'venue': 'Mercedes-Benz · Atlanta', 'oh': 1.9, 'od': 3.4, 'oa': 3.8},
+    {'home': 'England', 'away': 'Croatia', 'group': 'L', 'date': '17/06', 'time': '17:00', 'venue': 'AT&T Stadium · Dallas', 'oh': 1.65, 'od': 3.6, 'oa': 5.0},
+    {'home': 'Ghana', 'away': 'Panama', 'group': 'L', 'date': '17/06', 'time': '20:00', 'venue': 'BMO Field · Toronto', 'oh': 1.9, 'od': 3.4, 'oa': 3.8},
+    {'home': 'England', 'away': 'Ghana', 'group': 'L', 'date': '23/06', 'time': '17:00', 'venue': 'Gillette Stadium · Boston', 'oh': 1.4, 'od': 4.2, 'oa': 8.0},
+    {'home': 'Panama', 'away': 'Croatia', 'group': 'L', 'date': '23/06', 'time': '20:00', 'venue': 'BMO Field · Toronto', 'oh': 2.8, 'od': 3.1, 'oa': 2.5},
+    {'home': 'Panama', 'away': 'England', 'group': 'L', 'date': '27/06', 'time': '18:00', 'venue': 'MetLife · Nova York/NJ', 'oh': 7.0, 'od': 4.0, 'oa': 1.38},
+    {'home': 'Uzbekistan', 'away': 'Colombia', 'group': 'K', 'date': '17/06', 'time': '23:00', 'venue': 'Azteca · Cidade do México', 'oh': 3.8, 'od': 3.1, 'oa': 1.9},
+    {'home': 'Portugal', 'away': 'Uzbekistan', 'group': 'K', 'date': '23/06', 'time': '14:00', 'venue': 'NRG Stadium · Houston', 'oh': 1.25, 'od': 5.0, 'oa': 10.0},
+    {'home': 'Colombia', 'away': 'Congo DR', 'group': 'K', 'date': '23/06', 'time': '23:00', 'venue': 'Estadio Akron · Guadalajara', 'oh': 1.65, 'od': 3.6, 'oa': 5.0},
+    {'home': 'Colombia', 'away': 'Portugal', 'group': 'K', 'date': '27/06', 'time': '20:30', 'venue': 'Hard Rock · Miami', 'oh': 3.8, 'od': 3.2, 'oa': 1.9},
+    {'home': 'Congo DR', 'away': 'Uzbekistan', 'group': 'K', 'date': '27/06', 'time': '20:30', 'venue': 'Mercedes-Benz · Atlanta', 'oh': 1.9, 'od': 3.4, 'oa': 3.8},
+    {'home': 'England', 'away': 'Croatia', 'group': 'L', 'date': '17/06', 'time': '17:00', 'venue': 'AT&T Stadium · Dallas', 'oh': 1.65, 'od': 3.6, 'oa': 5.0},
+    {'home': 'Ghana', 'away': 'Panama', 'group': 'L', 'date': '17/06', 'time': '20:00', 'venue': 'BMO Field · Toronto', 'oh': 1.9, 'od': 3.4, 'oa': 3.8},
+    {'home': 'England', 'away': 'Ghana', 'group': 'L', 'date': '23/06', 'time': '17:00', 'venue': 'Gillette Stadium · Boston', 'oh': 1.4, 'od': 4.2, 'oa': 8.0},
+    {'home': 'Panama', 'away': 'Croatia', 'group': 'L', 'date': '23/06', 'time': '20:00', 'venue': 'BMO Field · Toronto', 'oh': 2.8, 'od': 3.1, 'oa': 2.5},
+    {'home': 'Panama', 'away': 'England', 'group': 'L', 'date': '27/06', 'time': '18:00', 'venue': 'MetLife · Nova York/NJ', 'oh': 7.0, 'od': 4.0, 'oa': 1.38},
+    {'home': 'Croatia', 'away': 'Ghana', 'group': 'L', 'date': '27/06', 'time': '18:00', 'venue': 'Lincoln Financial · Philadelphia', 'oh': 1.8, 'od': 3.4, 'oa': 4.2},
+]
+* O parecer avalia a homogeneidade ou disparidade técnica do grupo baseando-se no desvio das forças de ataque e defesa reais de cada elenco. Classifica os grupos em *"Grupo da Morte"* (equilíbrio extremo), *"Favoritismo Absoluto"* (um time dominante disparado) ou *"Duelo de Favoritos"* (dois favoritos claros e dois azarões).
+
+### 2. Simulações Monte Carlo Locais (Chances de Classificação)
+* O frontend executa instantaneamente uma simulação de Monte Carlo local de 1.000 iterações em JavaScript sempre que um grupo é carregado.
+* Cada rodada de simulação calcula probabilidades de gol baseadas nas variáveis originais de Dixon-Coles (/team-ratings) calibradas via Poisson (Knuth) e mapeia a porcentagem exata de chances de cada uma das 4 seleções terminarem na zona de classificação (Top 2).
+
+### 3. Simulador de Jogos Rodada a Rodada com Tabela Viva
+* O usuário pode simular os 6 confrontos oficiais da fase de grupos com o clique de um botão.
+* O simulador roda as partidas com gols distribuídos estatisticamente, imprime o placar oficial simulado da rodada de forma gráfica e reconstrói instantaneamente a tabela de classificação oficial (Pontos, Vitórias, Empates, Derrotas, Gols Pró e Saldo de Gols).
+* A tabela destaca visualmente em fundo dourado os dois times qualificados para as fases de mata-mata.
+
+### 4. Substituição do "Meu Bolão" por Página de Assinatura Premium
+* **Remoção de Inputs de Palpite**: Eliminamos todas as caixas de texto onde o usuário inseria os próprios palpites e os botões "Salvar palpite" dos Match Cards.
+* **Nova Aba Premium (Planos & Assinatura)**: Convertemos a antiga aba de perfil e bolão pessoal em uma moderna página comercial de Assinatura Premium. Ela exibe o card de preço de **R$ 19,90** com os benefícios oficiais (3 placares sugeridos, motor Dixon-Coles calibrado com odds, alertas de lesões e escalações, e aplicativo PWA instalável no celular) e um botão interativo *"Assinar agora"*.
+
+### 5. Integração de Dados Reais em Tempo Real (Scraper RSS do Google News)
+* **Notícias Reais via Google News**: Desenvolvemos uma rotina no backend que consome o feed RSS do Google News traduzindo o nome de cada uma das 48 seleções para termos de busca focados em futebol em português. O sistema puxa os 2 títulos de matérias mais recentes, limpando o nome do portal (ex: "ge", "UOL"), e os exibe no card.
+* **Histórico de Resultados Reais**: Mapeamos e inserimos os resultados reais de amistosos e eliminatórias para a Copa realizados recentemente pelas principais seleções.
+* **Cache em Memória de Alta Velocidade**: Para manter o app rápido, os dados são cacheados e atualizados em segundo plano a cada 30 minutos a partir da inicialização da API.
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Erro na simulação Monte Carlo: {str(e)}")
+
+@app.get("/team-ratings")
+async def get_team_ratings():
+    """Retorna os ratings de ataque, defesa e pontuação FIFA de todas as seleções."""
+    try:
+        ratings = prediction_engine.TEAM_RATINGS
+        return {"ratings": ratings}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Erro ao obter ratings: {str(e)}")
+
+# ─── ENDPOINTS DE PARTIDAS ───────────────────────────────────────────────────
+
+@app.get("/health")
+async def health():
+    return {
+        "status": "ok",
+        "monitoring": news_monitor._running,
+        "alerts_count": len(news_monitor._alerts),
+    }
+
+@app.get("/matches")
+async def get_matches():
+    """Retorna a lista completa de 72 partidas da Copa 2026 com predições pré-calculadas."""
+    try:
+        matches = prediction_engine.get_matches_with_predictions()
+        return {"matches": matches, "count": len(matches)}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Erro ao obter partidas: {str(e)}")
+
+<!-- MISSING LINE 153 -->
+<!-- MISSING LINE 154 -->
+<!-- MISSING LINE 155 -->
+<!-- MISSING LINE 156 -->
+<!-- MISSING LINE 157 -->
+<!-- MISSING LINE 158 -->
+<!-- MISSING LINE 159 -->
+<!-- MISSING LINE 160 -->
+<!-- MISSING LINE 161 -->
+<!-- MISSING LINE 162 -->
+<!-- MISSING LINE 163 -->
+<!-- MISSING LINE 164 -->
+<!-- MISSING LINE 165 -->
+<!-- MISSING LINE 166 -->
+<!-- MISSING LINE 167 -->
+<!-- MISSING LINE 168 -->
+<!-- MISSING LINE 169 -->
+    news = simulated_news[hour % len(simulated_news)]
+
+    # Verificar se já foi mostrada recentemente
+    for a in _alerts[:10]:
+  document.getElementById('checkout-modal').style.display = 'flex';
+  document.getElementById('checkout-status').innerHTML = '<div class="loading-spinner" style="width:14px; height:14px; border-width:2px; margin:0;"></div> Aguardando confirmação do PIX...';
+}
+
+function closeCheckout() {
+  document.getElementById('checkout-modal').style.display = 'none';
+}
+
+function copyPixKey() {
+  const keyText = document.getElementById('pix-key').textContent;
+  navigator.clipboard.writeText(keyText).then(() => {
+    alert('Chave PIX copiada para a área de transferência!');
+  });
+}
+
+function simulatePayment() {
+  const statusEl = document.getElementById('checkout-status');
+  statusEl.innerHTML = '✅ Pagamento confirmado pelo banco!';
+  statusEl.style.color = '#4caf50';
+  
+  setTimeout(() => {
+    activePlan = 'VIP';
+    document.getElementById('checkout-modal').style.display = 'none';
+    
+    // Update plan text throughout UI if present
+    const planLabel = document.querySelector('.profile-plan');
+    if (planLabel) {
+      planLabel.innerHTML = '👑 Plano VIP Gold Ativo';
+      planLabel.style.color = 'var(--gold)';
+    }
+    
+    // Alert the user
+    alert('Parabéns! Sua assinatura VIP Gold foi ativada com sucesso. Aproveite todos os recursos avançados!');
+    
+    // Enable any simulated VIP features if necessary
+  }, 1500);
+}
+"""
+
+# Inject before the first </script>
+final_html = content_replaced[:script_end_idx] + js_helpers + content_replaced[script_end_idx:]
+
+with open(html_path, 'w', encoding='utf-8') as f:
+    f.write(final_html)
+
+print("HTML successfully updated with VIP subscription cards and PIX checkout simulator!")
+
+            return True
+    return False
+
+def get_unread_count() -> int:
+    return sum(1 for a in _alerts if not a.get("read"))
+
+
+def predict_match(home: str, away: str, odds_home: float = None, odds_draw: float = None, odds_away: float = None) -> Dict[str, Any]:
+    """
+    Computes score probability distribution using Dixon-Coles adjusted Bivariate Poisson.
+    Returns: win/draw/loss probabilities, top 3 scores, confidence, expected goals.
+    """
+    lambda_home, lambda_away = calculate_lambdas(home, away, odds_home, odds_draw, odds_away)
+    
+    prob_grid = {}
+    p_home_win = 0.0
+    p_draw = 0.0
+    p_away_win = 0.0
+    
+    for x in range(7):
+        for y in range(7):
+            p_x = poisson_prob(x, lambda_home)
+            p_y = poisson_prob(y, lambda_away)
+            p_y = poisson_prob(y, lambda_away)
+            independent_p = p_x * p_y
+            adjustment = dixon_coles_adjustment(x, y, lambda_home, lambda_away)
+            prob = independent_p * adjustment
+            
+            prob_grid[(x, y)] = prob
+            
+            if x > y:
+                p_home_win += prob
+            elif x == y:
+                p_draw += prob
+            else:
+                p_away_win += prob
+                
+    total_grid_p = sum(prob_grid.values())
+    if total_grid_p > 0:
+        p_home_win = (p_home_win / total_grid_p) * 100
+        p_draw = (p_draw / total_grid_p) * 100
+        p_away_win = (p_away_win / total_grid_p) * 100
+        for k in prob_grid:
+            prob_grid[k] = (prob_grid[k] / total_grid_p) * 100
+            
+    score_list = []
+    for (x, y), prob in prob_grid.items():
+        score_list.append({
+            'score': f"{x}–{y}",
+            'home': x,
+            'away': y,
+            'probability': round(prob, 1)
+        })
+    score_list.sort(key=lambda item: item['probability'], reverse=True)
+    top_scores = score_list[:3]
+    
+    model_confidence = min(max(int(top_scores[0]['probability'] * 2.5 + abs(p_home_win - p_away_win) * 0.4), 45), 95)
+    
+    return {
+        'home_win_prob': round(p_home_win),
+        'draw_prob': round(p_draw),
+        'away_win_prob': round(p_away_win),
+        'home_goals_expected': round(lambda_home, 2),
+        'away_goals_expected': round(lambda_away, 2),
+        'top_scores': top_scores,
+        'confidence': model_confidence
+    }
+
+# --- MONTE CARLO SIMULATOR ---
+
+.alerts-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 20px 16px;
+  border-bottom: 0.5px solid rgba(255,255,255,0.06);
+  padding-top: calc(var(--safe-top) + 20px);
+}
+.alerts-header h3 {
+  font-family: var(--font);
+  font-size: 18px;
+  font-weight: 700;
+}
+.alerts-close {
+  font-size: 24px;
+  cursor: pointer;
+  color: #8896b3;
+  padding: 4px 8px;
+}
+    summary = f"O confronto entre {home} e {away} promete movimentar a rodada. "
+    
+    if is_host:
+        summary += f"Jogando sob seus domínios no {venue_name}, {home} conta com forte apoio local e vantagem de país-sede (+15% xG). "
+    
+    if fav == "home":
+        summary += f"A IA aponta {home} como favorita para vencer, sustentada por {lh:.2f} gols esperados (xG) contra {la:.2f} do adversário. "
+    elif fav == "away":
+        summary += f"Mesmo como visitante, {away} detém o favoritismo estatístico, com {la:.2f} xG projetados contra {lh:.2f} do {home}. "
+    else:
+        summary += f"O equilíbrio impera nas projeções estatísticas (xG de {lh:.2f} vs {la:.2f}), com alta chance de empate técnico. "
+        
+    if h_rating['att'] > a_rating['att']:
+        summary += f"O diferencial pode ser o ataque mais agressivo de {home}."
+    else:
+        summary += f"A defesa de {home} precisará conter o volume ofensivo de {away}."
+        
+    return summary
+
+def predict_match(home: str, away: str, odds_home: float = None, odds_draw: float = None, odds_away: float = None, venue: str = None) -> Dict[str, Any]:
+    """
+    Computes score probability distribution using Dixon-Coles adjusted Bivariate Poisson.
+    Returns: win/draw/loss probabilities, top 3 scores, confidence, expected goals,
+    suggested_score (with alternative rule), summary, news, last_results.
+        teams: Lista de nomes dos times participantes.
+
+    Returns:
+        Lista ordenada de dicts com 'team', 'probability', 'rank'.
+    """
+    n_simulations = 50_000
+    champion_count: dict[str, int] = {t: 0 for t in teams}
+
+    for _ in range(n_simulations):
+        remaining = list(teams)
+        np.random.shuffle(remaining)
+
+        # Simula mata-mata (pares de times)
+        while len(remaining) > 1:
+            next_round = []
+            for i in range(0, len(remaining), 2):
+                if i + 1 >= len(remaining):
+                    next_round.append(remaining[i])
+                    continue
+
+                team_a = remaining[i]
+                team_b = remaining[i + 1]
+                pred = predict_match(team_a, team_b)
+
+                # Sortear vencedor pela probabilidade do modelo
+                rand = np.random.random()
+                if rand < pred.home_win_prob / 100:
+                    next_round.append(team_a)
+                elif rand < (pred.home_win_prob + pred.draw_prob) / 100:
+                    # Empate → pênaltis (50/50)
+                    next_round.append(team_a if np.random.random() < 0.5 else team_b)
+                else:
+                    next_round.append(team_b)
+
+            remaining = next_round
+
+        if remaining:
+            champion_count[remaining[0]] += 1
+
+    results = [
+        {
+            "team": team,
+            "probability": round(count / n_simulations * 100, 1),
+            "rank": 0,
+        }
+        for team, count in champion_count.items()
+    ]
+    results.sort(key=lambda x: x["probability"], reverse=True)
+    for i, r in enumerate(results):
+        r["rank"] = i + 1
+
+    return results
+
+    best_score_tuple = (1, 1)
+    best_score_val = -1.0
+    for (x, y), prob in prob_grid.items():
+        is_match = False
+        if fav_outcome == "home" and x > y:
+            is_match = True
+        elif fav_outcome == "away" and x < y:
+            is_match = True
+        elif fav_outcome == "draw" and x == y:
+            is_match = True
+            
+        if is_match:
+            score_val = prob / (1.0 + 0.4 * (abs(x - lambda_home) + abs(y - lambda_away)))
+            if score_val > best_score_val:
+                best_score_val = score_val
+                best_score_tuple = (x, y)
+                
+    suggested_score = {
+        'home': best_score_tuple[0],
+        'away': best_score_tuple[1],
+        'score': f"{best_score_tuple[0]}–{best_score_tuple[1]}"
+    }
+    
+    model_confidence = min(max(int(top_scores[0]['probability'] * 2.5 + abs(p_home_win - p_away_win) * 0.4), 45), 95)
+    
+    summary = get_match_summary(home, away, venue, lambda_home, lambda_away, fav_outcome)
+    news = {
+        'home': get_mock_news(home),
+        'away': get_mock_news(away)
+    }
+    last_results = {
+        'home': get_mock_last_results(home),
+        'away': get_mock_last_results(away)
+    }
+    if not _cached_rankings:
+        run_monte_carlo(1000) # Fast startup simulation
+    return _cached_rankings
+
+def get_matches_with_predictions() -> List[Dict[str, Any]]:
+    """Returns all 72 matches with pre-calculated predictions."""
+    results = []
+    for idx, m in enumerate(COPA_MATCHES):
+        pred = predict_match(m['home'], m['away'], m['oh'], m['od'], m['oa'])
+    <div class="notif-body"><div class="notif-title-t">Backend conectado</div><div class="notif-desc">GolCerto API respondendo normalmente</div><div class="notif-time">há 2min</div></div>
+  </div>
+</div>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-top">
+    <div class="logo"><img src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADb/2wBDAAEBAQEBAQEBAQEBAQEBAQIBAQEBAQIBAQECAgICAgICAgIDAwQDAwMDAwICAwQDAwQEBAQEAgMFBQQEBQQEBAT/2wBDAQEBAQEBAQIBAQIEAwIDBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAT/wAARCAQABAADASIAAhEBAxEB/8QAHwAAAQIHAQEAAAAAAAAAAAAAAAECAwQFBgcJCggL/8QAdxAAAQMCBAQEAgYFCAUECAMpAQIDEQQFAAYSIQcIMUETIlFhCXEUMoGRofAVI0KxwQoWJFJi0eHxFxglM3I0Q1OSGSYnNUSCosIaKDZjZHN0g6OlsrPD0tM3OEVUVmZndXeHk7VHVWiEhZekRkhYZZSVlqfitP/EAB0BAQAABwEBAAAAAAAAAAAAAAABAgMEBQYHCAn/xABhEQABAwIDBAUECgwICwgCAgMBAAIDBBEFITEGEkFRBxMiYXEygZGhCBQjQlJyscHR8BUzYnOCkpOys8LS4RYkNFNjosPUFyVDVGR0g5Sj0/EYJjVEhKTV5DbExeJFRuP/2gAMAwEAAhEDEQA/APn/AODB0wYIlnaO0zhML/HCyOsCenTbBEgIEQN/U4CZP2RhJ7/u2wEz+emCIwo+cEbjCYMER1wu0H17e2Dr6zhPt6DBEs+wOFlJ3Mz7dMNwYIl23/AYJI23GEwYIlBidhvtOADpPTv7YTAdv8MESmJMdO2EwYMERMdNvlg9tvngwoiD6
+            'oh': m['oh'],
+            'od': m['od'],
+            'oa': m['oa'],
+            'status': 'SCHEDULED',
+            'score': {'home': None, 'away': None},
+            'prediction': pred
+        })
+    return results
+
+    <div class="nav-tab" ontouchend="showPage('profile',this);event.preventDefault()" onclick="showPage('profile',this)">Meu Bolão</div>
+  </div>
+</div>
+
+<!-- CONTENT -->
+<div class="scroll-content">
+
+<!-- PAGE: PARTIDAS -->
+<div class="page active" id="page-matches">
+  <div class="day-chips" id="day-chips-container">
+    <div class="day-chip active" ontouchend="filterMatches('all',this);event.preventDefault()" onclick="filterMatches('all',this)">Todos</div>
+    <div class="day-chip" ontouchend="filterMatches('A',this);event.preventDefault()" onclick="filterMatches('A',this)">Grupo A</div>
+    <div class="day-chip" ontouchend="filterMatches('B',this);event.preventDefault()" onclick="filterMatches('B',this)">Grupo B</div>
+    <div class="day-chip" ontouchend="filterMatches('C',this);event.preventDefault()" onclick="filterMatches('C',this)">Grupo C</div>
+    <div class="day-chip" ontouchend="filterMatches('D',this);event.preventDefault()" onclick="filterMatches('D',this)">Grupo D</div>
+    <div class="day-chip" ontouchend="filterMatches('E',this);event.preventDefault()" onclick="filterMatches('E',this)">Grupo E</div>
+    <div class="day-chip" ontouchend="filterMatches('F',this);event.preventDefault()" onclick="filterMatches('F',this)">Grupo F</div>
+    <div class="day-chip" ontouchend="filterMatches('G',this);event.preventDefault()" onclick="filterMatches('G',this)">Grupo G</div>
+    <div class="day-chip" ontouchend="filterMatches('H',this);event.preventDefault()" onclick="filterMatches('H',this)">Grupo H</div>
+    <div class="day-chip" ontouchend="filterMatches('I',this);event.preventDefault()" onclick="filterMatches('I',this)">Grupo I</div>
+    <div class="day-chip" ontouchend="filterMatches('J',this);event.preventDefault()" onclick="filterMatches('J',this)">Grupo J</div>
+    <div class="day-chip" ontouchend="filterMatches('K',this);event.preventDefault()" onclick="filterMatches('K',this)">Grupo K</div>
+    <div class="day-chip" ontouchend="filterMatches('L',this);event.preventDefault()" onclick="filterMatches('L',this)">Grupo L</div>
+  </div>
+  <div class="api-status"><div class="api-dot" id="api-dot"></div><span id="api-status-text">Conectando à API...</span></div>
+  <div class="refresh-bar"><span class="last-update" id="last-update">--</span><button class="btn-refresh" ontouchend="refreshAll();event.preventDefault()" onclick="refreshAll()">↻ Atualizar</button></div>
+  <div id="matches-container">
+    <div class="loading-card">
+      <div class="loading-spinner"></div>
+      <div class="loading-text">Carregando predições da IA...</div>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE: RANKINGS -->
+<div class="page" id="page-rankings">
+  <div class="rank-hero">
+    <div class="rank-hero-label">Predição IA · Copa 2026</div>
+    <div class="rank-hero-title">Quem vai ser campeão?</div>
+    <div class="rank-hero-sub">Simulação Monte Carlo · 10.000 torneios simulados</div>
+  </div>
+  <div class="section-label">Probabilidades de título</div>
+  <div id="rankings-container">
+    <div class="loading-card"><div class="loading-spinner"></div><div class="loading-text">Simulando torneios...</div></div>
+  </div>
+</div>
+
+<!-- PAGE: STATS -->
+<div class="page" id="page-stats">
+<div class="page" id="page-stats">
+  <div class="section-label">Gamificação da Inteligência Artificial</div>
+  <div class="ai-gamification-card" id="ai-gamification-card" style="background:var(--card-bg); border:1px solid rgba(197,168,92,0.3); border-radius:12px; padding:20px; margin-bottom:20px; display:flex; flex-direction:column; gap:16px; box-shadow:0 8px 32px rgba(0,0,0,0.5)">
+    <div style="display:flex; align-items:center; gap:14px">
+      <div style="width:50px; height:50px; border-radius:50%; background:rgba(197,168,92,0.1); border:1.5px solid var(--gold); display:flex; align-items:center; justify-content:center; font-size:24px; position:relative">
+        🤖
+        <div class="ai-pulse" style="position:absolute; width:100%; height:100%; border:2px solid var(--gold); border-radius:50%; opacity:0.7"></div>
+      </div>
+      <div>
+        <div style="font-size:16px; font-weight:bold; color:#fff">🤖 Robô de Inteligência Artificial</div>
+        <div style="font-size:12px; color:var(--gold); font-weight:600" id="ai-rank-level">Calculando nível...</div>
+      </div>
+    </div>
+    
+    <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; background:rgba(255,255,255,0.02); border-radius:8px; padding:12px; text-align:center">
+      <div>
+        <div style="font-size:20px; font-weight:bold; color:var(--gold)" id="ai-total-points">0</div>
+        <div style="font-size:10px; color:var(--text3)">Ponto
+      <div>
+        <div style="font-size:20px; font-weight:bold; color:var(--accent)" id="ai-accuracy">0%</div>
+        <div style="font-size:10px; color:var(--text3)">Aproveitamento</div>
+      </div>
+      <div>
+        <div style="font-size:20px; font-weight:bold; color:#fff" id="ai-analyzed">0</div>
+        <div style="font-size:10px; color:var(--text3)">Jogos Encerrados</div>
+      </div>
+    </div>
+    
+    <div style="font-size:11px; color:var(--text2)">
+      <div style="font-weight:bold; margin-bottom:8px; text-transform:uppercase; font-size:10px; letter-spacing:0.5px; color:var(--gold)">Detalhamento de Acertos</div>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px">
+        <div style="display:flex; justify-content:space-between; background:rgba(255,255,255,0.01); padding:6px 10px; border-radius:4px">
+          <span>🎯 Placar Exato (5 pts)</span>
+          <strong style="color:var(--gold)" id="ai-exact-count">0</strong>
+        </div>
+        <div style="display:flex; justify-content:space-between; background:rgba(255,255,255,0.01); padding:6px 10px; border-radius:4px">
+          <span>⚽ Vencedor + Saldo (3 pts)</span>
+          <strong style="color:var(--accent)" id="ai-vd-count">0</strong>
+        </div>
+        <div style="display:flex; justify-content:space-between; background:rgba(255,255,255,0.01); padding:6px 10px; border-radius:4px">
+        
+    return current_round[0]
+
+_cached_rankings = []
+
+def run_monte_carlo
+<!-- MISSING LINE 542 -->
+<!-- MISSING LINE 543 -->
+<!-- MISSING LINE 544 -->
+  <div class="bn-item" id="bn-rankings" ontouchend="showPage('rankings',null,'bn-rankings');event.preventDefault()" onclick="showPage('rankings',null,'bn-rankings')"><span class="bn-icon">🏆</span><span class="bn-label">Favoritos</span></div>
+  <div class="bn-item" id="bn-stats" ontouchend="showPage('stats',null,'bn-stats');event.preventDefault()" onclick="showPage('stats',null,'bn-stats')"><span class="bn-icon">📊</span><span class="bn-label">Estatísticas</span></div>
+  <div class="bn-item" id="bn-profile" ontouchend="showPage('profile',null,'bn-profile');event.preventDefault()" onclick="showPage('profile',null,'bn-profile')"><span class="bn-icon">📋</span><span class="bn-label">Meu Bolão</span></div>
+</div>
+<div class="toast" id="toast"></div>
+</div>
+
+<script>
+// ── CONFIGURAÇÃO DA API ──────────────────────────────────────────────────────
+const API = (window.location.hostname && (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1' && !window.location.hostname.startsWith('192.168.'))) ? 'https://golcerto-api.onrender.com' : 'http://192.168.1.142:8002';
+let liveResults = {};
+let autoRefreshTimer = null;
+
+async function fetchLiveResults() {
+  try {
+    const r = await fetch(API + '/matches', {signal: AbortSignal.timeout(8000)});
+<div class="page" id="page-profile">
+  <div class="profile-header">
+    <img src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADb/2wBDAAEBAQEBAQEBAQEBAQEBAQIBAQEBAQIBAQECAgICAgICAgIDAwQDAwMDAwICAwQDAwQEBAQEAgMFBQQEBQQEBAT/2wBDAQEBAQEBAQIBAQIEAwIDBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAT/wAARCAQABAADASIAAhEBAxEB/8QAHwAAAQIHAQEAAAAAAAAAAAAAAAECAwQFBgcJCggL/8QAdxAAAQMCBAQEAgYFCAUECAMpAQIDEQQFAAYSIQcIMUETIlFhCXEUMoGRofAVI0KxwQoWJFJi0eHxFxglM3I0Q1OSGSYnNUSCosIaKDZjZHN0g6OlsrPD0tM3OEVUVmZndXeHk7VHVWiEhZekRkhYZZSVlqfitP/EAB0BAQAABwEBAAAAAAAAAAAAAAABAgMEBQYHCAn/xABhEQABAwIDBAUECgwICwgCAgMBAAIDBBEFITEGEkFRBxMiYXEygZGhCBQjQlJyscHR8BUzYnOCkpOys8LS4RYkNFNjosPUFyVDVGR0g5Sj0/EYJjVEhKTV5DbExeJFRuP/2gAMAwEAAhEDEQA/APn/AODB0wYIlnaO0zhML/HCyOsCenTbBEgIEQN/U4CZP2RhJ7/u2wEz+emCIwo+cEbjCYMER1wu0H17e2Dr6zhPt6DBEs+wOFlJ3Mz7dMNwYIl23/AYJI23GEwYIlBidhvtOADpPTv7YTAdv8MESmJMdO2EwYMERMdNvlg9tvngwoi
+      if (!m.home_team || !m.away_team) return;
+            else:
+                rate1 = get_team_rating(t1)['fifa']
+                rate2 = get_team_rating(t2)['fifa']
+                prob1 = rate1 / (rate1 + rate2)
+                if random.random() < prob1:
+                    next_round.append(t1)
+                else:
+                    next_round.append(t2)
+        current_round = next_round
+        
+    return current_round[0]
+
+_cached_rankings = []
+
+def run_monte_carlo(iterations: int = 5000) -> List[Dict[str, Any]]:
+    """Runs Monte Carlo simulation and returns sorted title odds."""
+    global _cached_rankings
+    
+    champion_counts = {team: 0 for team in TEAM_RATINGS}
+    for _ in range(iterations):
+        winner = simulate_single_tournament()
+        if winner in champion_counts:
+            champion_counts[winner] += 1
+            
+    rankings = []
+    for team, count in champion_counts.items():
+    for _ in range(iterations):
+        winner = simulate_single_tournament()
+        if winner in champion_counts:
+            champion_counts[winner] += 1
+            
+    rankings = []
+    for team, count in champion_counts.items():
+        prob = (count / iterations) * 100
+        rankings.append({
+            'team': team,
+            'probability': round(prob, 1)
+        })
+        
+    rankings.sort(key=lambda item: item['probability'], reverse=True)
+    for idx, item in enumerate(rankings):
+        item['rank'] = idx + 1
+        
+    _cached_rankings = rankings
+    return rankings
+
+def get_cached_rankings() -> List[Dict[str, Any]]:
+    """Returns cached rankings or runs a fast simulation if cache is empty."""
+    global _cached_rankings
+    if not _cached_rankings:
+        run_monte_carlo(1000) # Fast startup simulation
+    return _cached_rankings
+
+def get_matches_with_predictions() -> List[Dict[str, Any]]:
+    """Returns all 72 matches with pre-calculated predictions."""
+    results = []
+    for idx, m in enumerate(COPA_MATCHES):
+        pred = predict_match(m['home'], m['away'], m['oh'], m['od'], m['oa'], m['venue'])
+        results.append({
+            'id': idx + 1,
+            'group': m['group'],
+            'home': m['home'],
+            'away': m['away'],
+            'date': m['date'],
+            'time': m['time'],
+            'venue': m['venue'],
+            'oh': m['oh'],
+            'od': m['od'],
+            'oa': m['oa'],
+            'status': 'SCHEDULED',
+            'score': {'home': None, 'away': None},
+            'prediction': pred
+        })
+    return results
+
+<!-- MISSING LINE 640 -->
+<!-- MISSING LINE 641 -->
+<!-- MISSING LINE 642 -->
+<!-- MISSING LINE 643 -->
+<!-- MISSING LINE 644 -->
+<!-- MISSING LINE 645 -->
+<!-- MISSING LINE 646 -->
+<!-- MISSING LINE 647 -->
+<!-- MISSING LINE 648 -->
+<!-- MISSING LINE 649 -->
+              <th style="padding:6px 4px; text-align:center">V</th>
+              <th style="padding:6px 4px; text-align:center">E</th>
+              <th style="padding:6px 4px; text-align:center">D</th>
+              <th style="padding:6px 4px; text-align:center">GP</th>
+              <th style="padding:6px 4px; text-align:center">SG</th>
+            </tr>
+          </thead>
+          <tbody id="group-table-body">
+            <!-- Rendered dynamically -->
+          </tbody>
+        </table>
+      </div>
+      <div style="font-size:9px; color:var(--text3); margin-top:8px; text-align:right">* Zona de classificação para o mata-mata (Top 2)</div>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE: PROFILE -->
+<div class="page" id="page-profile">
+  <div class="rank-hero" style="background: linear-gradient(135deg, #0d0d0d 0%, #151515 100%); border-bottom: 1px solid rgba(197, 168, 92, 0.2); padding: 30px 20px; text-align: center;">
+    <div class="rank-hero-label" style="color: var(--gold); font-size: 11px; font-weight: bold; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 6px;">Planos & Assinatura</div>
+    <div class="rank-hero-title" style="font-family: 'Oswald', sans-serif; font-size: 26px; font-weight: bold; color: #fff; margin-bottom: 8px;">ESCOLHA SEU PLANO DE IA</div>
+    <div class="rank-hero-sub" style="color: var(--text3); font-size: 12px; line-height: 1.4; max-width: 320px; margin: 0 auto;"
+  </div>
+
+  <div style="padding: 20px;">
+    <!-- PREMIUM PLAN CARD (AS REQUESTED IN THE SCREENSHOT) -->
+    <div class="premium-card" style="background: var(--card-bg); border: 2px solid var(--gold); border-radius: 16px; padding: 24px; box-shadow: 0 12px 40px rgba(197, 168, 92, 0.15); display: flex; flex-direction: column; gap: 20px; position: relative; overflow: hidden;">
+      
+  
+<!-- MISSING LINE 680 -->
+<!-- MISSING LINE 681 -->
+<!-- MISSING LINE 682 -->
+<!-- MISSING LINE 683 -->
+<!-- MISSING LINE 684 -->
+<!-- MISSING LINE 685 -->
+<!-- MISSING LINE 686 -->
+<!-- MISSING LINE 687 -->
+<!-- MISSING LINE 688 -->
+<!-- MISSING LINE 689 -->
+<!-- MISSING LINE 690 -->
+<!-- MISSING LINE 691 -->
+<!-- MISSING LINE 692 -->
+<!-- MISSING LINE 693 -->
+<!-- MISSING LINE 694 -->
+<!-- MISSING LINE 695 -->
+<!-- MISSING LINE 696 -->
+<!-- MISSING LINE 697 -->
+<!-- MISSING LINE 698 -->
+<!-- MISSING LINE 699 -->
+  try {
+    const r = await fetch(`${API}/`, {signal: AbortSignal.timeout(3000)});
+    if (r.ok) {
+      document.getElementById('api-dot').classList.remove('offline');
+      document.getElementById('api-status-text').textContent = 'IA conectada · localhost:8001';
+      return true;
+    }
+  } catch(e) {}
+  document.getElementById('api-dot').classList.add('offline');
+  document.getElementById('api-status-text').textContent = 'API offline — verifique o servidor';
+  return false;
+}
+
+// ── BUSCAR PREDIÇÃO DA API ───────────────────────────────────────────────────
+async function getPrediction(home, away, oh, od, oa) {
+        Assinar agora — R$19,90 🚀
+      </button>
+    </div>
+
+    <!-- VALUE PROPOSITION / FAQ -->
+    <div style="margin-top: 24px; display: flex; flex-direction: column; gap: 16px;">
+      <div style="font-size: 14px; font-weight: bold; color: #fff; border-left: 3px solid var(--gold); padding-left: 8px;">Por que ser Premium?</div>
+      
+      <div style="background: rgba(255,255,255,0.01); border: 1px solid rgba(255,255,255,0.04); border-radius: 8px; padding: 14px; font-size: 12px; line-height: 1.5; color: var(--text2);">
+        <strong style="color:#fff; display:block; margin-bottom:4px;">🎯 Mais acertos nas suas apostas ou bolões</strong>
+        Utilize a matemática avançada de probabilidades ao seu favor. O modelo Dixon-Coles analisa a força real de ataque e defesa histórica e recente de cada seleção para extrair padrões invisíveis.
+      </div>
+
+      <div style="background: rgba(255,255,255,0.01); border: 1px solid rgba(255,255,255,0.04); border-radius: 8px; padding: 14px; font-size: 12px; line-height: 1.5; color: var(--text2);">
+        <strong style="color:#fff; display:block; margin-bottom:4px;">📲 Receba notificações de valor instantâneas</strong>
+        Sempre que um jogador importante se machucar ou as odds oscilarem de forma atípica, você receberá alertas direto no seu celular para atualizar suas previsões antes do jogo começar.
+      </div>
+    </div>
+  </div>
+</div>
+
+  const aFlagUrl = FLAG(aFlag);
+        </div>
+        <div style="display: flex; gap: 8px; align-items: flex-start;">
+          <span style="color: var(--gold); font-weight: bold;">✓</span>
+          <span><strong>Simulador de Chaves (Bracket)</strong>: preencha o mata-mata visualmente e exporte infográficos personalizados</span>
+        </div>
+        <div style="display: flex; gap: 8px; align-items: flex-start;">
+          <span style="color: var(--gold); font-weight: bold;">✓</span>
+          <span><strong>Dossiê H2H Histórico Profundo</strong>: retrospectiva de confrontos oficiais e tabus em Copas do Mundo</span>
+        </div>
+        <div style="display: flex; gap: 8px; align-items: flex-start;">
+          <span style="color: var(--gold); font-weight: bold;">✓</span>
+          <span><strong>Índice de Entrosamento de Elenco</strong>: análise de sinergia do time baseada nos clubes europeus dos atletas</span>
+        </div>
+        <div style="display: flex; gap: 8px; align-items: flex-start;">
+          <span style="color: var(--gold); font-weight: bold;">✓</span>
+          <span><strong>Tendências da Comunidade</strong>: dados consolidados de palpites e simulações de todos os usuários</span>
+        </div>
+      </div>
+      
+      <button onclick="handleSubscribe('VIP Gold', 29.90)" style="width: 100%; background: var(--gold); color: #000; border: none; border-radius: 8px; padding: 14px; font-weight: bold; font-size: 14px; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 15px rgba(197, 168, 92, 0.4);">
+        Assinar VIP — R$ 29,90 🔥
+      </button>
+    </div>
+
+    <!-- VALUE PROPOSITION / FAQ -->
+    <div style="margin-top: 10px; display: flex; flex-direction: column; gap: 16px;">
+      <div style="font-size: 14px; font-weight: bold; color: #fff; border-left: 3px solid var(--gold); padding-left: 8px;">Por que o VIP é a melhor escolha?</div>
+      
+      <div style="background: rgba(255,255,255,0.01); border: 1px solid rgba(255,255,255,0.04); border-radius: 8px; padding: 14px; font-size: 12px; line-height: 1.5; color: var(--text2);">
+        <strong style="color:var(--gold); display:block; margin-bottom:4px;">📈 Ferramentas de Análise Profissional</strong>
+        Acesso a mercados alternativos (gols e cantos) e o inovador simulador "What-If" colocam você no mesmo nível de analistas profissionais de futebol.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- BEAUTIFUL CHECKOUT MODAL -->
+<div id="checkout-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); backdrop-filter:blur(8px); z-index:9999; align-items:center; justify-content:center;">
+  <div style="background:#0d0d0d; border: 1px solid var(--gold); border-radius: 16px; padding: 24px; width: 90%; max-width: 380px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); text-align:center; position:relative;">
+    <button onclick="closeCheckout()" style="position:absolute; top:12px; right:12px; background:none; border:none; color:var(--text3); font-size:18px; cursor:pointer;">&times;</button>
+  
+      <div class="teams-section">
+        <div class="team-col">
+          <img class="team-flag-big" src="${hFlagUrl}" alt="${m.home}" onerror="this.style.display='none'">
+          <div class="team-name-big">${m.home}</div>
+          <div class="team-rank-lbl">Copa 2026</div>
+        </div>
+        <div class="ai-score-center">
+          <div class="score-display">
+            <div class="score-digit ${isLive?'live':isFinished?'final':''}">${rH}</div>
+            <div class="score-colon">:</div>
+            <div class="score-digit ${isLive?'live':isFinished?'final':''}">${rA}</div>
+          </div>
+          <div class="ai-score-label">${isLive?'<span class="live-badge"><div class="live-dot"></div>AO VIVO</span>':isFinished?'<span class="finished-badge">✓ Resultado final</span>':'<span><div class="ai-pulse" style="display:inline-block"></div> Palpite IA</span>'}</div>
+        </div>
+        <div class="team-col">
+          <img class="team-flag-big" src="${aFlagUrl}" alt="${m.away}" onerror="this.style.display='none'">
+          <div class="team-name-big">${m.away}</div>
+          <div class="team-rank-lbl">Copa 2026</div>
+        </div>
+      </div>
+      <div class="prob-bar-section">
+        <div class="prob-bar-track">
+          <div class="pseg w" style="width:${hw}%"></div>
+          <div class="pseg d" style="width:${dw}%"></div>
+          <div class="pseg l" style="width:${aw}%"></div>
+        </div>
+        <div class="prob-labels-row">
+          <div class="prob-lbl-item"><div class="plbl-pct w">${hw}%</div><div class="plbl-name">${m.home.split(' ')[0]}</div></div>
+          <div class="prob-lbl-item"><div class="plbl-pct d">${dw}%</div><div class="plbl-name">Empate</div></div>
+          <div class="prob-lbl-item"><div class="plbl-pct l">${aw}%</div><div class="plbl-name">${m.away.split(' ')[0]}</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="conf-strip">
+      <span class="conf-label">🤖 Confiança do modelo</span>
+
+function handleSubscribe(planName, price) {
+  document.getElementById('modal-plan-title').textContent = 'ASSINATURA ' + planName.toUpperCase();
+  document.getElementById('pix-key').textContent = 'golcerto2026.pix.' + planName.toLowerCase().replace(' ', '') + '.gateway.br/pay/' + Math.random().toString(36).substring(2, 12);
+  document.getElementById('checkout-modal').style.display = 'flex';
+  document.getElementById('checkout-status').innerHTML = '<div class="loading-spinner" style="width:14px; height:14px; border-width:2px; margin:0;"></div> Aguardando confirmação do PIX...';
+}
+
+function closeCheckout() {
+  document.getElementById('checkout-modal').style.display = 'none';
+}
+
+function copyPixKey() {
+  const keyText = document.getElementById('pix-key').textContent;
+  navigator.clipboard.writeText(keyText).then(() => {
+    alert('Chave PIX copiada para a área de transferência!');
+  });
+}
+
+function simulatePayment() {
+  const statusEl = document.getElementById('checkout-status');
+  statusEl.innerHTML = '✅ Pagamento confirmado pelo banco!';
+  statusEl.style.color = '#4caf50';
+  
+  setTimeout(() => {
+    activePlan = 'VIP';
+    document.getElementById('checkout-modal').style.display = 'none';
+    
+    // Update plan text throughout UI if present
+    const planLabel = document.querySelector('.profile-plan');
+    if (planLabel) {
+      planLabel.innerHTML = '👑 Plano VIP Gold Ativo';
+      planLabel.style.color = 'var(--gold)';
+    }
+    
+    // Alert the user
+    alert('Parabéns! Sua assinatura VIP Gold foi ativada com sucesso. Aproveite todos os recursos avançados!');
+    
+          Coeficientes baseados em força histórica de ataque e defesa das seleções.
+        </div>
+      </div>
+    </div>
+    <div class="expand-toggle" id="tg-mc${idx}"><span>Ver detalhes do modelo</span><span class="t-arrow">▼</span></div>
+  </div>`;
+}
+
+// ── CARREGAR PARTIDAS ────────────────────────────────────────────────────────
+async function loadMatches() {
+  const container = document.getElementById('matches-container');
+  container.innerHTML = `<div class="loading-card"><div class="loading-spinner"></div><div class="loading-text">Calculando predições com IA...</div></div>`;
+
+  const apiOk = await checkAPIStatus();
+
+<!-- MISSING LINE 866 -->
+<!-- MISSING LINE 867 -->
+<!-- MISSING LINE 868 -->
+<!-- MISSING LINE 869 -->
+<!-- MISSING LINE 870 -->
+<!-- MISSING LINE 871 -->
+<!-- MISSING LINE 872 -->
+<!-- MISSING LINE 873 -->
+<!-- MISSING LINE 874 -->
+<!-- MISSING LINE 875 -->
+<!-- MISSING LINE 876 -->
+<!-- MISSING LINE 877 -->
+<!-- MISSING LINE 878 -->
+<!-- MISSING LINE 879 -->
+        </div>
+      </div>
+      <div class="prob-bar-section">
+        <div class="prob-bar-track">
+          <div class="pseg w" style="width:${hw}%"></div>
+          <div class="pseg d" style="width:${dw}%"></div>
+          <div class="pseg l" style="width:${aw}%"></div>
+        </div>
+        <div class="prob-labels-row">
+          <div class="prob-lbl-item"><div class="plbl-pct w">${hw}%</div><div class="plbl-name">${m.home.split(' ')[0]}</div></div>
+          <div class="prob-lbl-item"><div class="plbl-pct d">${dw}%</div><div class="plbl-name">Empate</div></div>
+          <div class="prob-lbl-item"><div class="plbl-pct l">${aw}%</div><div class="plbl-name">${m.away.split(' ')[0]}</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="conf-strip">
+      <span class="conf-label">🤖 Confiança do modelo</span>
+      <span class="conf-val">${conf}%</span>
+    </div>
+    ${top3HTML}
+    <div class="my-pick-section">
+      <div class="my-pick-box">
+        <div class="pick-box-title">Seu palpite para o bolão</div>
+        <div class="ai-hint"><span style="font-size:14px">💡</span><span class="ai-hint-text">IA sugere:</span><span class="ai-hint-score">${sug}</span></div>
+        <div class="pick-inputs-row">
+          <div class="pick-team-col">
+            <img class="pick-team-flag" src="${hFlagSm}" alt="${m.home}">
+            <div class="pick-team-lbl">${m.home}</div>
+            <input type="number" class="pick-num-input" id="ph${idx}" min="0" max="20" value="${scoreH}" onclick="event.stopPropagation()">
+          </div>
+          <div class="pick-colon">×</div>
+          <div class="pick-team-col">
+            <img class="pick-team-flag" src="${aFlagSm}" alt="${m.away}">
+            <div class="pick-team-lbl">${m.away}</div>
+            <input type="number" class="pick-num-input" id="pa${idx}" min="0" max="20" value="${scoreA}" onclick="event.stopPropagation()">
+          </div>
+        </div>
+        ${isFinished ? `<div class='result-box'><span>📊</span><span class='result-box-text'>Resultado final: ${rH} × ${rA}</span></div>` : `<button class='btn-save' onclick='savePick(event,"ph${idx}","pa${idx}","${hFlagUrl}","${m.home}","${aFlagUrl}","${m.away}")'>Salvar palpite</button>`}
+      </div>
+    </div>
+    <div class="expand-area" id="ex-mc${idx}">
+      <div class="divider"></div>
+      <div class="expand-inner">
+        <!-- 1. RESUMO DO JOGO -->
+        <div class="section-mini" style="margin-top:0">Análise do Jogo (IA)</div>
+        <div style="font-size:11.5px; color:var(--text); line-height:1.6; background:rgba(197,168,92,0.04); border:1px solid rgba(197,168,92,0.15); padding:10px 12px; border-radius:6px; margin:6px 0 14px">
+<!-- MISSING LINE 926 -->
+<!-- MISSING LINE 927 -->
+<!-- MISSING LINE 928 -->
+<!-- MISSING LINE 929 -->
+<!-- MISSING LINE 930 -->
+<!-- MISSING LINE 931 -->
+<!-- MISSING LINE 932 -->
+<!-- MISSING LINE 933 -->
+<!-- MISSING LINE 934 -->
+<!-- MISSING LINE 935 -->
+<!-- MISSING LINE 936 -->
+<!-- MISSING LINE 937 -->
+<!-- MISSING LINE 938 -->
+<!-- MISSING LINE 939 -->
+<!-- MISSING LINE 940 -->
+<!-- MISSING LINE 941 -->
+<!-- MISSING LINE 942 -->
+<!-- MISSING LINE 943 -->
+<!-- MISSING LINE 944 -->
+<!-- MISSING LINE 945 -->
+<!-- MISSING LINE 946 -->
+<!-- MISSING LINE 947 -->
+<!-- MISSING LINE 948 -->
+<!-- MISSING LINE 949 -->
+<!-- MISSING LINE 950 -->
+<!-- MISSING LINE 951 -->
+<!-- MISSING LINE 952 -->
+<!-- MISSING LINE 953 -->
+<!-- MISSING LINE 954 -->
+<!-- MISSING LINE 955 -->
+<!-- MISSING LINE 956 -->
+<!-- MISSING LINE 957 -->
+<!-- MISSING LINE 958 -->
+<!-- MISSING LINE 959 -->
+        </div>
+        <div style="font-size:9.5px;color:var(--text2);line-height:1.5;padding:4px 0; border-top:1px solid rgba(255,255,255,0.05)">
+          Previsão por Dixon-Coles calibrada com mercado e calibragem xG por país sede (+15% xG para EUA/Canadá/México jogando em casa).
+        </div>
+      </div>
+    </div>
+    <div class="expand-toggle" id="tg-mc${idx}"><span>Ver detalhes do modelo</span><span class="t-arrow">▼</span></div>
+  </div>`;
+}
+
+// ── CARREGAR PARTIDAS ────────────────────────────────────────────────────────
+async function loadMatches() {
+  const container = document.getElementById('matches-container');
+  container.innerHTML = `<div class="loading-card"><div class="loading-spinner"></div><div class="loading-text">Calculando predições com IA...</div></div>`;
+
+  const apiOk = await checkAPIStatus();
+
+  if (!apiOk) {
+    document.getElementById('matches-container').innerHTML = `<div class="error-card">
+      <div class="error-icon">⚠️</div>
+      <div class="error-text">Backend offline.<br>Rode o servidor com:<br><code style="color:var(--accent);font-size:12px">python -m uvicorn app.main:app --port 8002</code></div>
+      <button class="btn-retry" onclick="loadMatches()">Tentar novamente</button>
+    </div>`;
+    return;
+  }
+
+  try {
+    await fetchLiveResults();
+    const r = await fetch(API + '/matches', {signal: AbortSignal.timeout(12000)});
+    if (!r.ok) throw new Error('API matches error');
+    const data = await r.json();
+    
+    allMatchesData = (data.matches || []).map((m, i) => {
+      // Popular o cache de predições
+      const key = `${m.home}_${m.away}`;
+      predictionsCache[key] = m.prediction;
+      
+      // Armazenar placar ao vivo/final se houver
+      const st = m.status || '';
+      if (['FINISHED','IN_PLAY','PAUSED'].includes(st)) {
+        liveResults[key] = {
+          homeScore: (m.score||{}).home ?? null,
+          awayScore: (m.score||{}).away ?? null,
+          status: (st==='IN_PLAY'||st==='PAUSED') ? 'LIVE' : 'FINISHED',
+        };
+      }
+      
+      return {
+        match: m,
+        html: renderMatchCard(m, m.prediction, i)
+      };
+    });
+    
+    renderFilteredMatches();
+    startAutoRefresh();
+    
+    const now = new Date();
+    const luel = document.getElementById('last-update');
+    if(luel) luel.textContent = 'Atualizado ' + now.getHours().toString().padStart(2,'0') + ':' + now.getMinutes().toString().padStart(2,'0');
+  } catch(e) {
+    console.error(e);
+    document.getElementById('matches-container').innerHTML = `<div class="error-card">
+      <div class="error-icon">⚠️</div>
+      <div class="error-text">Erro ao buscar partidas da API.<br>Tente novamente.</div>
+      <button class="btn-retry" onclick="loadMatches()">Tentar novamente</button>
+    </div>`;
+  }
+}
+
+// ── CARREGAR RANKINGS ────────────────────────────────────────────────────────
+async function loadRankings() {
+<!-- MISSING LINE 1031 -->
+<!-- MISSING LINE 1032 -->
+<!-- MISSING LINE 1033 -->
+<!-- MISSING LINE 1034 -->
+<!-- MISSING LINE 1035 -->
+<!-- MISSING LINE 1036 -->
+<!-- MISSING LINE 1037 -->
+<!-- MISSING LINE 1038 -->
+<!-- MISSING LINE 1039 -->
+<!-- MISSING LINE 1040 -->
+<!-- MISSING LINE 1041 -->
+<!-- MISSING LINE 1042 -->
+<!-- MISSING LINE 1043 -->
+<!-- MISSING LINE 1044 -->
+<!-- MISSING LINE 1045 -->
+<!-- MISSING LINE 1046 -->
+<!-- MISSING LINE 1047 -->
+<!-- MISSING LINE 1048 -->
+<!-- MISSING LINE 1049 -->
+<!-- MISSING LINE 1050 -->
+<!-- MISSING LINE 1051 -->
+<!-- MISSING LINE 1052 -->
+<!-- MISSING LINE 1053 -->
+<!-- MISSING LINE 1054 -->
+<!-- MISSING LINE 1055 -->
+<!-- MISSING LINE 1056 -->
+<!-- MISSING LINE 1057 -->
+<!-- MISSING LINE 1058 -->
+<!-- MISSING LINE 1059 -->
+<!-- MISSING LINE 1060 -->
+<!-- MISSING LINE 1061 -->
+<!-- MISSING LINE 1062 -->
+<!-- MISSING LINE 1063 -->
+<!-- MISSING LINE 1064 -->
+<!-- MISSING LINE 1065 -->
+<!-- MISSING LINE 1066 -->
+<!-- MISSING LINE 1067 -->
+<!-- MISSING LINE 1068 -->
+<!-- MISSING LINE 1069 -->
+<!-- MISSING LINE 1070 -->
+<!-- MISSING LINE 1071 -->
+<!-- MISSING LINE 1072 -->
+<!-- MISSING LINE 1073 -->
+<!-- MISSING LINE 1074 -->
+<!-- MISSING LINE 1075 -->
+<!-- MISSING LINE 1076 -->
+<!-- MISSING LINE 1077 -->
+<!-- MISSING LINE 1078 -->
+<!-- MISSING LINE 1079 -->
+<!-- MISSING LINE 1080 -->
+<!-- MISSING LINE 1081 -->
+<!-- MISSING LINE 1082 -->
+<!-- MISSING LINE 1083 -->
+<!-- MISSING LINE 1084 -->
+<!-- MISSING LINE 1085 -->
+<!-- MISSING LINE 1086 -->
+<!-- MISSING LINE 1087 -->
+<!-- MISSING LINE 1088 -->
+<!-- MISSING LINE 1089 -->
+<!-- MISSING LINE 1090 -->
+<!-- MISSING LINE 1091 -->
+<!-- MISSING LINE 1092 -->
+<!-- MISSING LINE 1093 -->
+<!-- MISSING LINE 1094 -->
+<!-- MISSING LINE 1095 -->
+<!-- MISSING LINE 1096 -->
+<!-- MISSING LINE 1097 -->
+<!-- MISSING LINE 1098 -->
+<!-- MISSING LINE 1099 -->
+<!-- MISSING LINE 1100 -->
+<!-- MISSING LINE 1101 -->
+<!-- MISSING LINE 1102 -->
+<!-- MISSING LINE 1103 -->
+<!-- MISSING LINE 1104 -->
+<!-- MISSING LINE 1105 -->
+<!-- MISSING LINE 1106 -->
+<!-- MISSING LINE 1107 -->
+<!-- MISSING LINE 1108 -->
+<!-- MISSING LINE 1109 -->
+<!-- MISSING LINE 1110 -->
+<!-- MISSING LINE 1111 -->
+<!-- MISSING LINE 1112 -->
+<!-- MISSING LINE 1113 -->
+<!-- MISSING LINE 1114 -->
+<!-- MISSING LINE 1115 -->
+<!-- MISSING LINE 1116 -->
+<!-- MISSING LINE 1117 -->
+<!-- MISSING LINE 1118 -->
+<!-- MISSING LINE 1119 -->
+<!-- MISSING LINE 1120 -->
+<!-- MISSING LINE 1121 -->
+<!-- MISSING LINE 1122 -->
+<!-- MISSING LINE 1123 -->
+<!-- MISSING LINE 1124 -->
+<!-- MISSING LINE 1125 -->
+<!-- MISSING LINE 1126 -->
+<!-- MISSING LINE 1127 -->
+<!-- MISSING LINE 1128 -->
+<!-- MISSING LINE 1129 -->
+<!-- MISSING LINE 1130 -->
+<!-- MISSING LINE 1131 -->
+<!-- MISSING LINE 1132 -->
+<!-- MISSING LINE 1133 -->
+<!-- MISSING LINE 1134 -->
+<!-- MISSING LINE 1135 -->
+<!-- MISSING LINE 1136 -->
+<!-- MISSING LINE 1137 -->
+<!-- MISSING LINE 1138 -->
+<!-- MISSING LINE 1139 -->
+<!-- MISSING LINE 1140 -->
+<!-- MISSING LINE 1141 -->
+<!-- MISSING LINE 1142 -->
+<!-- MISSING LINE 1143 -->
+<!-- MISSING LINE 1144 -->
+<!-- MISSING LINE 1145 -->
+<!-- MISSING LINE 1146 -->
+<!-- MISSING LINE 1147 -->
+<!-- MISSING LINE 1148 -->
+<!-- MISSING LINE 1149 -->
+      'England':'Kane + Bellingham','Germany':'Geração renovada','Spain':'Tiki-taka moderno',
+      'Portugal':'Jovens talentosos','Netherlands':'Sólido coletivo',
+    };
+    container.innerHTML = data.rankings.slice(0,8).map((t,i) => {
+      const code = FLAG_CODES[t.team] || 'un';
+      const maxProb = data.rankings[0].probability;
+      return `<div class="champion-card">
+        <div class="rank-pos ${posClass[i]||''}">#${t.rank}</div>
+        <img class="champ-flag-img" src="${FLAG(code)}" alt="${t.team}">
+        <div class="champ-info"><div class="champ-name">${t.team}</div><div class="champ-detail">${details[t.team]||'Seleção competitiva'}</div></div>
+        <div class="champ-right">
+          <div class="champ-prob">${t.probability}%</div>
+          <div class="champ-bar"><div class="champ-fill" style="width:${Math.round(t.probability/maxProb*100)}%"></div></div>
+        </div>
+      </div>`;
+    }).join('');
+  } catch(e) {
+    container.innerHTML = `<div class="error-card"><div class="error-icon">⚠️</div><div class="error-text">Não foi possível carregar rankings.<br>API offline?</div><button class="btn-retry" onclick="loadRankings()">Tentar novamente</button></div>`;
+  }
+}
+
+// ── CARREGAR STATS ───────────────────────────────────────────────────────
+}
+
+// Polling automático a cada 5 minutos
+fetchAlerts();
+setInterval(fetchAlerts, 5 * 60 * 1000);
+// ── FIM SISTEMA DE ALERTAS ──────────────────────────────────────────────
+
+</script>
+
+<!-- ALERTAS OVERLAY -->
+<div class="alerts-overlay" id="alerts-overlay" onclick="closeAlerts()"></div>
+
+      <div class="mini-bars">
+        <div class="mini-bar-row"><span class="mini-bar-lbl">Ataque</span><div class="mini-bar-track"><div class="mini-bar-fill" style="width:${t.atk}%;background:var(--accent)"></div></div><span class="mini-bar-val">${t.atk}</span></div>
+        <div class="mini-bar-row"><span class="mini-bar-lbl">Defesa</span><div class="mini-bar-track"><div class="mini-bar-fill" style="width:${t.def}%;background:var(--blue)"></div></div><span class="mini-bar-val">${t.def}</span></div>
+        <div class="mini-bar-row"><span class="mini-bar-lbl">Forma recente</span><div class="mini-bar-track"><div class="mini-bar-fill" style="width:${t.form}%;background:var(--gold)"></div></div><span class="mini-bar-val">${t.form}</span></div>
+        <div class="mini-bar-row"><span class="mini-bar-lbl">Força do elenco</span><div class="mini-bar-track"><div class="mini-bar-fill" style="width:${t.squad}%;background:var(--purple)"></div></div><span class="mini-bar-val">${t.squad}</span></div>
+      </div>
+    </div>`).join('');
+}
+
+// ── NAVEGAÇÃO ────────────────────────────────────────────────────────────────
+function showPage(id, tabEl, bnId) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  if (tabEl) { document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active')); tabEl.classList.add('active'); }
+  if (bnId) {
+    document.querySelectorAll('.bn-item').forEach(b => b.classList.remove('active'));
+    document.getElementById(bnId).classList.add('active');
+}
+
+function renderFilteredMatches() {
+  const container = document.getElementById('matches-container');
+  const filtered = currentFilter === 'all' 
+    ? allMatchesData 
+    : allMatchesData.filter(m => m.match.group === currentFilter);
+  
+  if (filtered.length === 0) {
+    container.innerHTML = '<div class="loading-card"><div class="loading-text">Nenhum jogo neste grupo</div></div>';
+    return;
+  }
+  container.innerHTML = filtered.map(m => m.html).join('');
+}
+
+function savePick(e, hId, aId, hFlag, hName, aFlag, aName) {
+  e.stopPropagation();
+  const h = document.getElementById(hId).value;
+  const a = document.getElementById(aId).value;
+  const key = hName+' vs '+aName;
+  const idx = picks.findIndex(p => p.key===key);
+  const entry = {key,hFlag,hName,aFlag,aName,h,a};
+  if (idx>=0) picks[idx]=entry; else picks.push(entry);
+  document.getElementById('cnt-picks').textContent = picks.length;
+  showToast('✅ '+hName+' '+h+' × '+a+' '+aName+' salvo!');
+}
+
+function renderPicks() {
+  const empty = document.getElementById('picks-empty');
+  const cont = document.getElementById('picks-container');
+  cont.innerHTML = '';
+  if (!picks.length) { empty.style.display='block'; return; }
+  empty.style.display='none';
+  picks.forEach(p => {
+    const d = document.createElement('div');
+    d.className = 'pick-entry';
+    d.innerHTML = `
+      <div class="pick-match-info">
+        <div class="pick-match-flags"><img src="${p.hFlag}" style="width:22px;height:16px;object-fit:cover;border-radius:3px;vertical-align:middle"> <img src="${p.aFlag}" style="width:22px;height:16px;object-fit:cover;border-radius:3px;vertical-align:middle"></div>
+        <div class="pick-match-name">${p.hName} vs ${p.aName}</div>
+      </div>
+      <div class="pick-score-saved">${p.h} × ${p.a}</div>
+      <span class="pick-status wait">Aguard.</span>`;
+    cont.appendChild(d);
+  });
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2600);
+}
+
+function toggleNotif() { document.getElementById('notifPanel').classList.toggle('open'); }
+
+// Fix touch para mobile
+document.addEventListener('touchstart', function() {}, {passive: true});
+
+document.addEventListener('click', e => {
