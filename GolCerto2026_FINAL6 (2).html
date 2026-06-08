@@ -1013,30 +1013,30 @@ function renderMatchCard(m, pred, idx) {
       <span style="color:${n.type==='warning'?'var(--red)':'#4caf50'}; margin-right:4px">${n.type==='warning'?'⚠️':'✅'}</span>
       ${n.title}
     </div>
-  `).join('') : '<div style="font-size:11px;color:var(--text3)">Sem notícias recentes</div>';
+  `).join('') : '<div style="font-size:11px;color:var(--text2)">Sem notícias recentes</div>';
 
   const newsA = pred && pred.news && Array.isArray(pred.news.away) ? pred.news.away.map(n => `
     <div style="padding:6px 0; border-bottom:1px solid rgba(255,255,255,0.05); font-size:11px; color:var(--text2)">
       <span style="color:${n.type==='warning'?'var(--red)':'#4caf50'}; margin-right:4px">${n.type==='warning'?'⚠️':'✅'}</span>
       ${n.title}
     </div>
-  `).join('') : '<div style="font-size:11px;color:var(--text3)">Sem notícias recentes</div>';
+  `).join('') : '<div style="font-size:11px;color:var(--text2)">Sem notícias recentes</div>';
 
   const resultsH = pred && pred.last_results && Array.isArray(pred.last_results.home) ? pred.last_results.home.map(r => `
     <div style="display:flex; align-items:center; gap:6px; margin-bottom:4px; font-size:11px">
       <span style="display:inline-flex; align-items:center; justify-content:center; width:18px; height:18px; border-radius:3px; font-weight:bold; font-size:9px; background:${r.status==='V'?'#4caf50':r.status==='E'?'var(--gold)':'var(--red)'}; color:#000">${r.status}</span>
       <span style="color:var(--text)">${r.score}</span>
-      <span style="color:var(--text3)">vs ${tName(r.opponent)} (${r.where==='Home'?'C':'F'})</span>
+      <span style="color:var(--text2)">vs ${tName(r.opponent)} (${r.where==='Home'?'C':'F'})</span>
     </div>
-  `).join('') : '<div style="font-size:11px;color:var(--text3)">Sem histórico registrado</div>';
+  `).join('') : '<div style="font-size:11px;color:var(--text2)">Sem histórico registrado</div>';
 
   const resultsA = pred && pred.last_results && Array.isArray(pred.last_results.away) ? pred.last_results.away.map(r => `
     <div style="display:flex; align-items:center; gap:6px; margin-bottom:4px; font-size:11px">
       <span style="display:inline-flex; align-items:center; justify-content:center; width:18px; height:18px; border-radius:3px; font-weight:bold; font-size:9px; background:${r.status==='V'?'#4caf50':r.status==='E'?'var(--gold)':'var(--red)'}; color:#000">${r.status}</span>
       <span style="color:var(--text)">${r.score}</span>
-      <span style="color:var(--text3)">vs ${tName(r.opponent)} (${r.where==='Home'?'C':'F'})</span>
+      <span style="color:var(--text2)">vs ${tName(r.opponent)} (${r.where==='Home'?'C':'F'})</span>
     </div>
-  `).join('') : '<div style="font-size:11px;color:var(--text3)">Sem histórico registrado</div>';
+  `).join('') : '<div style="font-size:11px;color:var(--text2)">Sem histórico registrado</div>';
 
   const matchSummaryText = pred && pred.summary ? pred.summary : `IA prevê ${conf}% de confiança para este palpite. A simulação Dixon-Coles aponta equilíbrio estatístico com leve vantagem técnica.`;
 
@@ -1106,7 +1106,7 @@ function renderMatchCard(m, pred, idx) {
           <div class="my-pick-box" style="border:1px solid var(--border2); padding:12px; border-radius:8px; background:rgba(0,0,0,0.2)">
             <div class="pick-box-title" style="font-size:11px; font-weight:bold; color:var(--text2)">Sugestão de Palpite do Bolão</div>
             <div class="ai-hint" style="margin: 8px 0 4px 0;"><span style="font-size:14px">💡</span><span class="ai-hint-text">IA sugere:</span><span class="ai-hint-score" style="color:var(--gold); font-weight:bold; margin-left:6px">${sug}</span></div>
-            <div style="font-size:9.5px; color:var(--text3); line-height:1.35; margin-bottom:0;">
+            <div style="font-size:9.5px; color:var(--text2); line-height:1.35; margin-bottom:0;">
               * A <strong>Sugestão</strong> equilibra probabilidade com o estilo tático esperado (ex: jogo aberto), enquanto a lista de <strong>Placares Mais Prováveis</strong> reflete a probabilidade matemática bruta pura.
             </div>
           </div>
@@ -1120,11 +1120,11 @@ function renderMatchCard(m, pred, idx) {
         <!-- Enrichment: Last 3 Results -->
         <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:12px;">
           <div>
-            <div style="font-size:9px; text-transform:uppercase; color:var(--text3); font-weight:bold; margin-bottom:4px">Últimos Resultados (${tName(m.home)})</div>
+            <div style="font-size:9px; text-transform:uppercase; color:var(--gold); font-weight:bold; margin-bottom:4px">Últimos Resultados (${tName(m.home)})</div>
             ${resultsH}
           </div>
           <div>
-            <div style="font-size:9px; text-transform:uppercase; color:var(--text3); font-weight:bold; margin-bottom:4px">Últimos Resultados (${tName(m.away)})</div>
+            <div style="font-size:9px; text-transform:uppercase; color:var(--gold); font-weight:bold; margin-bottom:4px">Últimos Resultados (${tName(m.away)})</div>
             ${resultsA}
           </div>
         </div>
@@ -1132,11 +1132,11 @@ function renderMatchCard(m, pred, idx) {
         <!-- Enrichment: Medical Alerts / News Feed -->
         <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:12px;">
           <div>
-            <div style="font-size:9px; text-transform:uppercase; color:var(--text3); font-weight:bold; margin-bottom:4px">Notícias de Lesão (${tName(m.home)})</div>
+            <div style="font-size:9px; text-transform:uppercase; color:var(--gold); font-weight:bold; margin-bottom:4px">Notícias de Lesão (${tName(m.home)})</div>
             ${newsH}
           </div>
           <div>
-            <div style="font-size:9px; text-transform:uppercase; color:var(--text3); font-weight:bold; margin-bottom:4px">Notícias de Lesão (${tName(m.away)})</div>
+            <div style="font-size:9px; text-transform:uppercase; color:var(--gold); font-weight:bold; margin-bottom:4px">Notícias de Lesão (${tName(m.away)})</div>
             ${newsA}
           </div>
         </div>
