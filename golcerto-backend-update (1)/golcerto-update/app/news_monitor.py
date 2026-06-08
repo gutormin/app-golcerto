@@ -88,44 +88,72 @@ def _odds_changed_significantly(old: dict, new: dict, threshold: float = 0.10) -
     return False
 
 async def check_odds_changes():
-    """Verifica se odds mudaram significativamente e gera alertas."""
+    """Verifica se odds de todas as 72 partidas da Copa mudaram significativamente e gera alertas."""
     global _last_odds
+    import random
 
-    for match_key, base_odds in BASE_ODDS.items():
-        current_odds = _simulate_odds_variation(match_key, base_odds)
-        old_odds = _last_odds.get(match_key)
+    matches = prediction_engine.COPA_MATCHES
 
-        if old_odds and _odds_changed_significantly(old_odds, current_odds):
-            teams = match_key.split(" x ")
-            
-            # Predict using our premium Dixon-Coles engine
-            old_pred_data = prediction_engine.predict_match(teams[0], teams[1], old_odds["home"], old_odds["draw"], old_odds["away"])
-            new_pred_data = prediction_engine.predict_match(teams[0], teams[1], current_odds["home"], current_odds["draw"], current_odds["away"])
-            
+    for m in matches:
+        match_key = f"{m['home']} x {m['away']}"
+        ref_odds = _last_odds.get(match_key) or {
+            "home": m["oh"],
+            "draw": m["od"],
+            "away": m["oa"]
+        }
+
+        # 15% de chance de mudar a odd a cada rodada de verificação para simular flutuações reais
+        if random.random() < 0.15:
+            # Simular variação realista de ±8%
+            variation = {
+                "home": round(ref_odds["home"] * random.uniform(0.92, 1.08), 2),
+                "draw": round(ref_odds["draw"] * random.uniform(0.95, 1.05), 2),
+                "away": round(ref_odds["away"] * random.uniform(0.92, 1.08), 2),
+            }
+            # Evitar odds menores que 1.05
+            variation["home"] = max(1.05, variation["home"])
+            variation["draw"] = max(1.05, variation["draw"])
+            variation["away"] = max(1.05, variation["away"])
+
+            # Predict using our Dixon-Coles engine
+            old_pred_data = prediction_engine.predict_match(m["home"], m["away"], ref_odds["home"], ref_odds["draw"], ref_odds["away"], m.get("venue"))
+            new_pred_data = prediction_engine.predict_match(m["home"], m["away"], variation["home"], variation["draw"], variation["away"], m.get("venue"))
+
             old_pred = old_pred_data['suggested_score']['score']
             new_pred = new_pred_data['suggested_score']['score']
+
+            # Atualiza na origem do prediction_engine
+            m["oh"] = variation["home"]
+            m["od"] = variation["draw"]
+            m["oa"] = variation["away"]
+
+            home_team_pt = prediction_engine.PORTUGUESE_TEAM_NAMES.get(m["home"], m["home"])
+            away_team_pt = prediction_engine.PORTUGUESE_TEAM_NAMES.get(m["away"], m["away"])
+            match_key_pt = f"{home_team_pt} x {away_team_pt}"
 
             if old_pred != new_pred:
                 _add_alert(
                     alert_type="prediction_change",
-                    title=f"🔄 Palpite da IA mudou!",
-                    body=f"{match_key}: de {old_pred} para {new_pred} — odds do mercado mudaram",
-                    match=match_key,
+                    title=f"🔄 Palpite da IA mudou — {match_key_pt}!",
+                    body=f"De {old_pred} para {new_pred}. Nova calibração de odds: Mandante {variation['home']}, Empate {variation['draw']}, Visitante {variation['away']}.",
+                    match=match_key_pt,
                     priority="high",
                 )
-            else:
-                home_diff = current_odds["home"] - old_odds["home"]
-                who = teams[0] if home_diff < 0 else teams[1] if home_diff > 0 else ""
+            elif _odds_changed_significantly(ref_odds, variation, threshold=0.08):
+                home_diff = variation["home"] - ref_odds["home"]
+                who = home_team_pt if home_diff < 0 else away_team_pt if home_diff > 0 else ""
                 direction = "favorito" if home_diff < 0 else "azarão"
                 _add_alert(
                     alert_type="odds_change",
-                    title=f"📊 Odds alteradas — {match_key}",
-                    body=f"{who} ficou mais {direction} nas casas de apostas (palpite mantido: {new_pred})",
-                    match=match_key,
+                    title=f"📊 Odds alteradas — {match_key_pt}",
+                    body=f"{who} ficou mais {direction} nas casas de apostas (palpite mantido: {new_pred}). Novas odds: {variation['home']} | {variation['draw']} | {variation['away']}",
+                    match=match_key_pt,
                     priority="medium",
                 )
 
-        _last_odds[match_key] = current_odds
+            _last_odds[match_key] = variation
+        else:
+            _last_odds[match_key] = ref_odds
 
 async def check_simulated_news():
     """Gera notícias simuladas realistas para demonstração.
@@ -185,10 +213,10 @@ async def check_simulated_news():
     )
 
 async def monitoring_loop():
-    """Loop principal de monitoramento — roda a cada 15 minutos."""
+    """Loop principal de monitoramento — roda a cada 2 minutos."""
     global _running
     _running = True
-    print("[MONITOR] Iniciando monitoramento de notícias e odds...")
+    print("[MONITOR] Iniciando monitoramento de notícias e odds de todos os 72 jogos...")
 
     # Alerta inicial de boas-vindas
     _add_alert(
@@ -205,8 +233,8 @@ async def monitoring_loop():
         except Exception as e:
             print(f"[MONITOR] Erro: {e}")
 
-        # Verificar a cada 15 minutos
-        await asyncio.sleep(15 * 60)
+        # Verificar a cada 2 minutos
+        await asyncio.sleep(2 * 60)
 
 def get_alerts(limit: int = 20, unread_only: bool = False) -> list[dict]:
     """Retorna alertas recentes."""

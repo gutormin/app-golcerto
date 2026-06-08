@@ -1,0 +1,19 @@
+# Python caching
+__pycache__/
+*.pyc
+
+# Local diagnostic/scratch files
+find_*.py
+inspect_*.py
+check_*.py
+test_*.py
+debug_*.py
+search_*.py
+extract_*.py
+*.txt
+*.log
+
+# Git ignore itself or build scripts if desired, but keep standard ones
+build_*.py
+delete_*.py
+reconstruct_*.py

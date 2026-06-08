@@ -36,13 +36,30 @@ app.add_middleware(
 # ─── ROOT ENDPOINT ────────────────────────────────────────────────────────────
 @app.get("/")
 async def root():
-    """Endpoint raiz para verificação de status."""
+    """Retorna a Landing Page do aplicativo."""
+    file_name = "landing.html"
+    if os.path.exists(file_name):
+        return FileResponse(file_name)
+    scratch_path = os.path.join("C:\\Users\\Gustavo\\.gemini\\antigravity\\scratch\\gol certo", file_name)
+    if os.path.exists(scratch_path):
+        return FileResponse(scratch_path)
     return {
         "status": "ok",
         "service": "GolCerto 2026 API",
         "monitoring": news_monitor._running,
         "alerts_count": len(news_monitor._alerts)
     }
+
+@app.get("/player.jpg")
+async def get_player():
+    """Retorna a imagem do jogador de fundo."""
+    file_name = "player.jpg"
+    if os.path.exists(file_name):
+        return FileResponse(file_name)
+    scratch_path = os.path.join("C:\\Users\\Gustavo\\.gemini\antigravity\\scratch\\gol certo", file_name)
+    if os.path.exists(scratch_path):
+        return FileResponse(scratch_path)
+    raise HTTPException(status_code=404, detail="Imagem player.jpg não encontrada.")
 
 # ─── APP ENDPOINT ─────────────────────────────────────────────────────────────
 @app.get("/app")
@@ -61,10 +78,32 @@ async def get_app():
     if os.path.exists(grandparent_path):
         return FileResponse(grandparent_path)
     # Procurar no diretório específico de scratch
-    scratch_path = os.path.join("C:\\Users\\Gustavo\\.gemini\antigravity\\scratch\\gol certo", file_name)
+    scratch_path = os.path.join("C:\\Users\\Gustavo\\.gemini\\antigravity\\scratch\\gol certo", file_name)
     if os.path.exists(scratch_path):
         return FileResponse(scratch_path)
     raise HTTPException(status_code=404, detail="Arquivo HTML do aplicativo não encontrado.")
+
+
+@app.get("/logo.jpg")
+async def get_logo():
+    """Retorna o logotipo (logo.jpg)."""
+    file_name = "logo.jpg"
+    # Procurar no Cwd
+    if os.path.exists(file_name):
+        return FileResponse(file_name)
+    # Procurar um nível acima
+    parent_path = os.path.join("..", file_name)
+    if os.path.exists(parent_path):
+        return FileResponse(parent_path)
+    # Procurar dois níveis acima
+    grandparent_path = os.path.join("..", "..", file_name)
+    if os.path.exists(grandparent_path):
+        return FileResponse(grandparent_path)
+    # Procurar no diretório específico de scratch
+    scratch_path = os.path.join("C:\\Users\\Gustavo\\.gemini\\antigravity\\scratch\\gol certo", file_name)
+    if os.path.exists(scratch_path):
+        return FileResponse(scratch_path)
+    raise HTTPException(status_code=404, detail="Logotipo não encontrado.")
 
 
 # ─── ENDPOINTS DE ALERTAS ─────────────────────────────────────────────────────

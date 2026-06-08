@@ -466,10 +466,12 @@ def get_mock_news(team: str) -> List[Dict[str, str]]:
 async def update_all_news_cache_loop():
     while True:
         try:
-            print("[NEWS] Updating news cache for all teams...")
+            print("[NEWS] Atualizando banco de notícias (Verificação Periódica - 2x ao dia)...")
             for team in TEAM_RATINGS.keys():
                 try:
-                    q = PORTUGUESE_TEAM_NAMES.get(team, f"Seleção de {team} de futebol")
+                    # Otimiza busca no Google News para trazer apenas notícias recentes e relevantes da Copa 2026
+                    base_query = PORTUGUESE_TEAM_NAMES.get(team, f"Seleção de {team}").replace(" de futebol", "")
+                    q = f'"{base_query}" "Copa do Mundo 2026"'
                     url = f"https://news.google.com/rss/search?q={urllib.parse.quote(q)}&hl=pt-BR&gl=BR&ceid=BR:pt-419"
                     async with httpx.AsyncClient() as client:
                         r = await client.get(url, timeout=10.0)
@@ -495,10 +497,11 @@ async def update_all_news_cache_loop():
                 except Exception as team_err:
                     pass
                 await asyncio.sleep(0.1)
-            print("[NEWS] News cache update complete!")
+            print("[NEWS] Atualização de notícias concluída com sucesso!")
         except Exception as e:
-            print(f"[NEWS] Error in loop: {e}")
-        await asyncio.sleep(30 * 60)
+            print(f"[NEWS] Erro no loop de notícias: {e}")
+        # Roda exatamente 2 vezes ao dia (a cada 12 horas)
+        await asyncio.sleep(12 * 60 * 60)
 
 def get_match_summary(home: str, away: str, venue: str, lh: float, la: float, fav: str) -> str:
     h_rating = get_team_rating(home)
