@@ -415,23 +415,6 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--b
 <body>
 <div id="app">
 
-<!-- NOTIF PANEL -->
-<div class="notif-panel" id="notifPanel">
-  <div class="notif-panel-title">Notificações <span style="font-size:20px;cursor:pointer;color:var(--text2)" ontouchend="toggleNotif();event.preventDefault()" onclick="openAlerts()" id="bell-btn" style="position:relative"><span id="alert-badge" class="alert-badge" style="display:none">0</span></span></div>
-  <div class="notif-item">
-    <div class="notif-icon ni-green">⚡</div>
-    <div class="notif-body"><div class="notif-title-t">Nova análise disponível</div><div class="notif-desc">Modelo atualizado com dados mais recentes</div><div class="notif-time">agora</div></div>
-  </div>
-  <div class="notif-item">
-    <div class="notif-icon ni-gold">🏆</div>
-    <div class="notif-body"><div class="notif-title-t">Modelo de IA ativo</div><div class="notif-desc">Poisson + Dixon-Coles rodando em localhost:8001</div><div class="notif-time">há 1min</div></div>
-  </div>
-  <div class="notif-item" style="border:none">
-    <div class="notif-icon ni-purple">🤖</div>
-    <div class="notif-body"><div class="notif-title-t">Backend conectado</div><div class="notif-desc">GolCerto API respondendo normalmente</div><div class="notif-time">há 2min</div></div>
-  </div>
-</div>
-
 <!-- HEADER -->
 <div class="header">
   <div class="header-top">
@@ -442,7 +425,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--b
         <span>✈️ VIP - Telegram</span>
       </button>
       <button class="btn-demo-sim" onclick="toggleSimPanel(event)" style="background:rgba(197,168,92,0.15); border:1px solid var(--gold); color:var(--gold); border-radius:12px; padding:4px 10px; font-size:10px; font-weight:bold; cursor:pointer; display:flex; align-items:center; gap:4px; outline:none; margin-right:4px">⚙️ Demo</button>
-      <div class="btn-notif" ontouchend="toggleNotif();event.preventDefault()" onclick="toggleNotif()">🔔<div class="notif-dot"></div></div>
+      <div class="btn-notif" ontouchend="openAlerts();event.preventDefault()" onclick="openAlerts()" style="position:relative">🔔<span id="alert-badge" class="alert-badge" style="display:none">0</span></div>
     </div>
   </div>
   <div class="nav-tabs">
@@ -1509,7 +1492,7 @@ document.addEventListener('click', e => {
 loadMatches();
 
 // ── SISTEMA DE ALERTAS ─────────────────────────────────────────────────
-const API_BASE = window.location.origin;
+const API_BASE = API;
 let _lastAlertId = 0;
 let _alertsOpen = false;
 
