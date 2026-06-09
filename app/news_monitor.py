@@ -44,6 +44,41 @@ KEYWORDS_HIGH = ["lesão", "lesao", "lesionado", "suspenso", "suspensão", "fora
                   "convocado", "Neymar", "Mbappé", "Messi", "Haaland", "Vinicius"]
 KEYWORDS_MEDIUM = ["treinamento", "escalação", "titular", "reserva", "recuperação", "volta"]
 
+import os
+
+# ─── TELEGRAM BOT BOT INTEGRATION ─────────────────────────────────────────────
+async def send_telegram_alert_async(title: str, body: str, match: str, priority: str):
+    token = os.environ.get("TELEGRAM_BOT_TOKEN")
+    chat_id = os.environ.get("TELEGRAM_CHAT_ID")
+    if not token or not chat_id:
+        return
+    
+    # Format message with markdown (Telegram support)
+    # Emojis based on priority
+    emoji = "🔴" if priority == "high" else "🟡" if priority == "medium" else "🟢"
+    msg = (
+        f"🏆 *GolCerto 2026 — Alerta VIP* 🏆\n\n"
+        f"{emoji} *{title}*\n"
+        f"{body}\n\n"
+    )
+    if match:
+        msg += f"⚽ *Jogo/Seleção:* {match}\n"
+    msg += f"⚡ *Prioridade:* {priority.upper()}"
+    
+    url = f"https://api.telegram.org/bot{token}/sendMessage"
+    try:
+        async with httpx.AsyncClient() as client:
+            resp = await client.post(url, json={
+                "chat_id": chat_id,
+                "text": msg,
+                "parse_mode": "Markdown",
+                "disable_web_page_preview": True
+            })
+            if resp.status_code != 200:
+                print(f"[Telegram] Failed to send message: {resp.text}")
+    except Exception as e:
+        print(f"[Telegram] Error sending message: {e}")
+
 def _now_iso() -> str:
     return datetime.now(timezone.utc).isoformat()
 
@@ -65,6 +100,15 @@ def _add_alert(alert_type: str, title: str, body: str, match: str = "", priority
         print(f"[ALERTA] {priority.upper()} | {title}")
     except UnicodeEncodeError:
         print(f"[ALERTA] {priority.upper()} | {title.encode('ascii', errors='replace').decode('ascii')}")
+        
+    # Trigger Telegram broadcast asynchronously
+    try:
+        loop = asyncio.get_running_loop()
+        if loop.is_running():
+            loop.create_task(send_telegram_alert_async(title, body, match, priority))
+    except RuntimeError:
+        # No running loop (e.g. during script usage), run synchronously
+        pass
 
 def _simulate_odds_variation(match_key: str, odds: dict) -> dict:
     """Simula variação realista de odds (±5%) para demonstração.
