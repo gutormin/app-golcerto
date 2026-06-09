@@ -205,8 +205,7 @@ async def check_real_news():
     """Busca notícias reais e atualizadas da Copa e seleções usando o feed RSS do Globo Esporte (GE)."""
     rss_urls = [
         "https://ge.globo.com/rss/ge/futebol/selecao-brasileira/",
-        "https://ge.globo.com/rss/ge/futebol-internacional/",
-        "https://ge.globo.com/rss/ge/futebol/"
+        "https://ge.globo.com/rss/ge/futebol-internacional/"
     ]
     
     headers = {'User-Agent': 'Mozilla/5.0'}
@@ -236,6 +235,13 @@ async def check_real_news():
         "dinamarca": "Denmark"
     }
 
+    # Palavras-chave de clubes nacionais a serem excluídos (para evitar notícias de torneios locais)
+    exclude_clubs = [
+        "botafogo", "flamengo", "corinthians", "palmeiras", "são paulo", "vasco", 
+        "fluminense", "cruzeiro", "grêmio", "internacional", "santos", "atlético-mg", 
+        "bahia", "coritiba", "série a", "brasileirão", "copa do brasil", "libertadores"
+    ]
+
     # Desativar verificação estrita de SSL para evitar falhas em conexões locais/restritas
     async with httpx.AsyncClient(verify=False) as client:
         for url in rss_urls:
@@ -261,11 +267,21 @@ async def check_real_news():
                     # Limpar tags HTML remanescentes na descrição
                     desc = re.sub('<[^<]+?>', '', desc)
                     
+                    # Resumir a descrição para no máximo 135 caracteres
+                    if len(desc) > 135:
+                        desc = desc[:132].strip() + "..."
+                    
                     # Evitar duplicados (verifica os últimos 50 alertas)
                     if any(a.get("title") == title for a in _alerts):
                         continue
                     
                     text_to_search = (title + " " + desc).lower()
+                    
+                    # Se contiver termos de clubes nacionais, ignora (a menos que mencione explicitamente Copa ou Seleção)
+                    has_club_term = any(club in text_to_search for club in exclude_clubs)
+                    has_copa_term = any(copa in text_to_search for copa in ["copa do mundo", "copa 2026", "seleção", "selecao", "mundial"])
+                    if has_club_term and not has_copa_term:
+                        continue
                     
                     # Filtrar notícias relevantes (relacionadas a desfalques, lesões, seleções ou copa)
                     is_relevant = False
@@ -276,7 +292,7 @@ async def check_real_news():
                         is_relevant = True
                         priority = "high"
                     # Palavras-chave de média prioridade (escalação/preparação)
-                    elif any(kw in text_to_search for kw in ["escalação", "escalacao", "treino", "titular", "convocado", "copa do mundo", "copa 2026", "seleção", "selecao"]):
+                    elif any(kw in text_to_search for kw in ["escalação", "escalacao", "treino", "titular", "convocado", "copa do mundo", "copa 2026", "seleção", "selecao", "mundial"]):
                         is_relevant = True
                         priority = "medium"
                         
