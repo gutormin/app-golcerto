@@ -1,0 +1,2349 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#0a0e1a">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Gol Certo 2026">
+<title>GolCerto 2026 · Bolão Inteligente</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#050505;--bg2:#0a0a0a;--bg3:#121212;--card:#0d0d0d;--card2:#151515;
+  --border:rgba(197,168,92,0.08);--border2:rgba(197,168,92,0.15);
+  --accent:#c5a85c;--accent2:#b89047;--gold:#c5a85c;--red:#ff4d6d;
+  --blue:#8e8e93;--purple:#c5a85c;--text:#ffffff;--text2:#a0a0a0;--text3:#505050;
+  --font:'Oswald',sans-serif;--body:'Plus Jakarta Sans',sans-serif;
+  --safe-top:env(safe-area-inset-top,0px);--safe-bottom:env(safe-area-inset-bottom,0px);
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--body);overflow:hidden;overscroll-behavior:none}
+#app{display:flex;flex-direction:column;height:100%;max-width:430px;margin:0 auto;position:relative;overflow:hidden}
+.header{padding:calc(var(--safe-top) + 10px) 20px 0;background:var(--bg);z-index:10;flex-shrink:0}
+.header-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;gap:8px}
+.logo{display:flex;align-items:center;gap:8px}
+.logo-icon{width:38px;height:38px;background:var(--accent);color:#000;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:20px}
+.logo-text{font-family:var(--font);font-weight:800;font-size:20px;letter-spacing:-0.6px}
+.logo-text span{color:var(--accent)}
+.header-actions{display:flex;align-items:center;gap:10px}
+.btn-notif{width:38px;height:38px;background:var(--card);border:0.5px solid var(--border2);border-radius:11px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:17px;position:relative}
+.notif-dot{position:absolute;top:8px;right:8px;width:7px;height:7px;background:var(--red);border-radius:50%;border:1.5px solid var(--bg)}
+.badge-pro{background:linear-gradient(135deg,var(--gold),#d4a017);color:#000;font-family:var(--font);font-size:10px;font-weight:800;padding:5px 12px;border-radius:20px}
+.nav-tabs{display:flex;gap:4px;background:var(--card);border-radius:14px;padding:4px;margin-bottom:4px}
+.nav-tab{flex:1;text-align:center;padding:12px 4px;border-radius:10px;font-size:11px;font-weight:600;color:var(--text2);cursor:pointer;transition:all .2s;touch-action:manipulation;min-height:44px;display:flex;align-items:center;justify-content:center;}
+.nav-tab.active{background:var(--accent);color:#000;font-weight:700}
+.scroll-content{flex:1;overflow-y:auto;overflow-x:hidden;padding:16px 16px calc(var(--safe-bottom) + 90px);-webkit-overflow-scrolling:touch;touch-action:pan-y;}
+.scroll-content::-webkit-scrollbar{display:none}
+.page{display:none;animation:fadeUp .25s ease}
+.page.active{display:block}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.day-chips{display:flex;gap:7px;margin-bottom:18px;overflow-x:auto;padding-bottom:2px}
+.day-chips::-webkit-scrollbar{display:none}
+.day-chip{flex-shrink:0;padding:10px 16px;border-radius:20px;font-size:12px;font-weight:600;border:0.5px solid var(--border2);color:var(--text2);cursor:pointer;transition:all .2s;background:var(--card);touch-action:manipulation;min-height:44px;display:flex;align-items:center;}
+.day-chip.active{background:var(--accent);color:#000;border-color:var(--accent)}
+
+/* MATCH CARD */
+.match-card{background:var(--card);border:0.5px solid var(--border2);border-radius:20px;margin-bottom:16px;cursor:pointer;transition:border-color .2s,transform .15s;touch-action:manipulation;-webkit-overflow-scrolling:touch;}
+.match-card:active{transform:scale(0.985)}
+.match-card.expanded{border-color:rgba(0,229,160,0.35)}
+.card-top-strip{height:3px;background:linear-gradient(90deg,var(--accent),rgba(0,229,160,0.1))}
+.card-inner{padding:18px 20px 0}
+.match-meta-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+.match-group-lbl{font-size:11px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:1.2px}
+.match-time-pill{font-family:var(--font);font-size:12px;font-weight:700;color:var(--accent);background:rgba(0,229,160,0.1);padding:4px 10px;border-radius:8px}
+.match-venue{font-size:11px;color:var(--text2);margin-bottom:20px}
+.teams-section{display:flex;align-items:center;gap:0;margin-bottom:22px}
+.team-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:10px}
+.team-flag-big{width:72px;height:54px;object-fit:cover;border-radius:10px;box-shadow:0 6px 20px rgba(0,0,0,0.5);display:block}
+.team-name-big{font-family:var(--font);font-size:16px;font-weight:800;color:var(--text);letter-spacing:-0.4px}
+.team-rank-lbl{font-size:11px;color:var(--text2);font-weight:500}
+.ai-score-center{display:flex;flex-direction:column;align-items:center;gap:8px;padding:0 10px;flex-shrink:0}
+.score-display{display:flex;align-items:center;gap:6px}
+.score-digit{font-family:var(--font);font-size:38px;font-weight:800;color:var(--text);background:var(--card2);width:52px;height:58px;display:flex;align-items:center;justify-content:center;border-radius:12px;border:0.5px solid var(--border2);line-height:1}
+.score-colon{font-family:var(--font);font-size:28px;font-weight:800;color:var(--text3);margin-bottom:4px}
+.ai-score-label{display:flex;align-items:center;gap:5px;font-size:10px;color:var(--purple);font-weight:700;text-transform:uppercase;letter-spacing:0.8px}
+.ai-pulse{width:6px;height:6px;background:var(--purple);border-radius:50%;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.25}}
+.prob-bar-section{margin-bottom:16px}
+.prob-bar-track{display:flex;height:7px;border-radius:4px;overflow:hidden;gap:3px;margin-bottom:10px}
+.pseg{height:100%;border-radius:4px;transition:width .8s cubic-bezier(.34,1.56,.64,1)}
+.pseg.w{background:var(--accent)}.pseg.d{background:var(--text3)}.pseg.l{background:var(--red)}
+.prob-labels-row{display:flex}
+.prob-lbl-item{flex:1;text-align:center}
+.plbl-pct{font-family:var(--font);font-size:17px;font-weight:800}
+.plbl-pct.w{color:var(--accent)}.plbl-pct.d{color:var(--text2)}.plbl-pct.l{color:var(--red)}
+.plbl-name{font-size:10px;color:var(--text2);font-weight:500;margin-top:3px;text-transform:uppercase;letter-spacing:0.8px}
+.conf-strip{display:flex;align-items:center;gap:10px;padding:10px 14px;background:rgba(0,229,160,0.06);border-top:0.5px solid rgba(0,229,160,0.1)}
+.conf-label{font-size:11px;color:#e0e0e0;flex:1}
+.conf-val{font-family:var(--font);font-size:17px;font-weight:800;color:var(--accent)}
+.top3-section{padding:0 20px}
+.top3-title{font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:1.3px;margin-bottom:10px;margin-top:16px}
+.top3-row{display:flex;gap:8px;margin-bottom:16px}
+.score-card{flex:1;background:var(--bg3);border-radius:14px;border:0.5px solid var(--border);padding:12px 8px;text-align:center;position:relative;overflow:hidden}
+.score-card.top1{border-color:rgba(0,229,160,0.25)}
+.score-card.top1::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--accent)}
+.score-card-rank{font-size:9px;color:var(--text3);font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px}
+.score-card.top1 .score-card-rank{color:var(--accent)}
+.score-card-score{font-family:var(--font);font-size:22px;font-weight:800;color:var(--text);margin-bottom:6px;letter-spacing:-0.5px}
+.score-card.top1 .score-card-score{color:var(--accent)}
+.score-card-prob{font-family:var(--font);font-size:15px;font-weight:700;color:var(--text2)}
+.score-card.top1 .score-card-prob{color:var(--text)}
+.score-card-bar{height:3px;background:var(--border2);border-radius:2px;margin-top:8px;overflow:hidden}
+.score-card-fill{height:100%;background:var(--accent);border-radius:2px;opacity:.5}
+.score-card.top1 .score-card-fill{opacity:1}
+.my-pick-section{padding:0 20px 20px}
+.my-pick-box{background:var(--bg3);border-radius:14px;border:0.5px solid var(--border2);padding:14px}
+.pick-box-title{font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:1.2px;margin-bottom:12px}
+.pick-inputs-row{display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:12px}
+.pick-team-col{text-align:center}
+.pick-team-flag{width:44px;height:33px;object-fit:cover;border-radius:6px;display:block;margin:0 auto 4px}
+.pick-team-lbl{font-size:11px;color:var(--text2);margin-bottom:8px}
+.pick-num-input{font-family:var(--font);font-size:30px;font-weight:800;color:var(--text);background:var(--card);border:0.5px solid var(--border2);border-radius:10px;width:70px;height:70px;text-align:center;outline:none;-moz-appearance:textfield;touch-action:manipulation;}
+.pick-num-input::-webkit-inner-spin-button,.pick-num-input::-webkit-outer-spin-button{-webkit-appearance:none}
+.pick-num-input:focus{border-color:var(--accent)}
+.pick-colon{font-family:var(--font);font-size:26px;font-weight:800;color:var(--text3)}
+.ai-hint{display:flex;align-items:center;gap:7px;background:rgba(168,85,247,0.08);border:0.5px solid rgba(168,85,247,0.18);border-radius:10px;padding:8px 12px;margin-bottom:10px}
+.ai-hint-text{font-size:11px;color:var(--text2);flex:1}
+.ai-hint-score{font-family:var(--font);font-size:14px;font-weight:800;color:var(--purple)}
+.btn-save{width:100%;background:var(--accent);color:#000;border:none;border-radius:10px;padding:15px;font-family:var(--font);font-size:14px;font-weight:800;cursor:pointer;transition:all .15s;touch-action:manipulation;min-height:50px;}
+.btn-save:active{transform:scale(0.97);background:var(--accent2)}
+.expand-area{display:none;animation:slideDown .25s ease}
+.expand-area.open{display:block}
+@keyframes slideDown{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
+.expand-inner{padding:0 20px 20px}
+.divider{height:0.5px;background:var(--border);margin:0 20px 16px}
+.section-mini{font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:1.3px;margin-bottom:10px}
+.lineup-grid{display:flex;gap:12px;margin-bottom:16px}
+.lineup-col{flex:1}
+.lineup-team-lbl{font-size:11px;font-weight:600;color:var(--text2);margin-bottom:6px;display:flex;align-items:center;gap:5px}
+.player-row{display:flex;align-items:center;gap:5px;padding:4px 0;border-bottom:0.5px solid var(--border)}
+.player-num{font-family:var(--font);font-size:10px;color:var(--text3);width:16px;text-align:right;flex-shrink:0}
+.player-name{font-size:11px;color:var(--text);flex:1}
+.player-pos{font-size:9px;padding:1px 5px;border-radius:4px;font-weight:700;flex-shrink:0}
+.pos-gk{background:rgba(245,200,66,0.15);color:var(--gold)}
+.pos-df{background:rgba(77,166,255,0.15);color:var(--blue)}
+.pos-mf{background:rgba(0,229,160,0.15);color:var(--accent)}
+.pos-fw{background:rgba(255,77,109,0.15);color:var(--red)}
+.stats-grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px}
+.stat-box2{background:var(--bg3);border-radius:10px;padding:10px 12px;border:0.5px solid var(--border)}
+.stat-v2{font-family:var(--font);font-size:22px;font-weight:800;margin-bottom:2px}
+.stat-l2{font-size:10px;color:var(--text3);line-height:1.3}
+.expand-toggle{display:flex;align-items:center;justify-content:center;gap:6px;padding:16px;font-size:12px;font-weight:600;color:var(--text3);cursor:pointer;border-top:0.5px solid var(--border);transition:color .2s;touch-action:manipulation;min-height:50px;}
+.expand-toggle:hover{color:var(--accent)}
+.t-arrow{transition:transform .25s;font-size:10px}
+.expand-toggle.open .t-arrow{transform:rotate(180deg)}
+
+/* LOADING STATE */
+.loading-card{background:var(--card);border:0.5px solid var(--border2);border-radius:20px;margin-bottom:16px;padding:40px 20px;text-align:center}
+.loading-spinner{width:36px;height:36px;border:3px solid var(--border2);border-top-color:var(--accent);border-radius:50%;animation:spin 0.8s linear infinite;margin:0 auto 14px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-text{font-size:13px;color:var(--text2)}
+.error-card{background:var(--card);border:0.5px solid rgba(255,77,109,0.3);border-radius:20px;margin-bottom:16px;padding:30px 20px;text-align:center}
+.error-icon{font-size:32px;margin-bottom:10px}
+.error-text{font-size:13px;color:var(--text2);margin-bottom:14px;line-height:1.5}
+.btn-retry{background:var(--accent);color:#000;border:none;border-radius:10px;padding:10px 20px;font-family:var(--font);font-size:13px;font-weight:800;cursor:pointer}
+
+/* RANKINGS */
+.rank-hero{background:var(--card);border-radius:20px;padding:22px 20px;margin-bottom:14px;border:0.5px solid var(--border2);position:relative;overflow:hidden}
+.rank-hero::after{content:'🏆';position:absolute;right:18px;top:14px;font-size:54px;opacity:.07}
+.rank-hero-label{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:1.5px;font-weight:700;margin-bottom:8px}
+.rank-hero-title{font-family:var(--font);font-size:24px;font-weight:800;color:var(--gold);margin-bottom:4px;letter-spacing:-0.5px}
+.rank-hero-sub{font-size:12px;color:var(--text2)}
+.champion-card{background:var(--card);border-radius:16px;padding:14px 18px;margin-bottom:10px;display:flex;align-items:center;gap:14px;border:0.5px solid var(--border);cursor:pointer;transition:border-color .2s}
+.champion-card:active{border-color:var(--accent)}
+.rank-pos{font-family:var(--font);font-size:20px;font-weight:800;color:var(--text3);width:28px;text-align:center;flex-shrink:0}
+.rank-pos.g{color:var(--gold)}.rank-pos.s{color:#c0c0c0}.rank-pos.b{color:#cd7f32}
+.champ-flag-img{width:44px;height:33px;object-fit:cover;border-radius:6px;flex-shrink:0}
+.champ-info{flex:1}
+.champ-name{font-family:var(--font);font-size:16px;font-weight:800;margin-bottom:2px;letter-spacing:-0.3px}
+.champ-detail{font-size:11px;color:var(--text3)}
+.champ-right{text-align:right}
+.champ-prob{font-family:var(--font);font-size:20px;font-weight:800;color:var(--accent)}
+.champ-bar{width:64px;height:3px;background:var(--border2);border-radius:2px;margin-top:5px;overflow:hidden}
+.champ-fill{height:100%;background:var(--accent);border-radius:2px}
+
+/* STATS */
+.stats-hero{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px}
+.big-stat{background:var(--card);border-radius:16px;padding:18px 16px;border:0.5px solid var(--border2)}
+.big-stat-val{font-family:var(--font);font-size:34px;font-weight:800;margin-bottom:4px}
+.big-stat-lbl{font-size:11px;color:var(--text2);line-height:1.3}
+.team-stat-card{background:var(--card);border-radius:16px;padding:16px 18px;margin-bottom:10px;border:0.5px solid var(--border)}
+.ts-header{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.ts-flag-img{width:36px;height:27px;object-fit:cover;border-radius:5px}
+.ts-name{font-family:var(--font);font-size:17px;font-weight:800;letter-spacing:-0.3px}
+.ts-sub{font-size:11px;color:var(--text3);margin-top:2px}
+.mini-bars{display:flex;flex-direction:column;gap:9px}
+.mini-bar-row{display:flex;align-items:center;gap:8px}
+.mini-bar-lbl{font-size:11px;color:var(--text2);width:90px;flex-shrink:0}
+.mini-bar-track{flex:1;height:5px;background:var(--border2);border-radius:3px;overflow:hidden}
+.mini-bar-fill{height:100%;border-radius:3px}
+.mini-bar-val{font-family:var(--font);font-size:12px;font-weight:700;color:var(--text2);width:30px;text-align:right}
+
+/* PROFILE */
+.profile-header{text-align:center;padding:20px 0 18px}
+.avatar{width:72px;height:72px;background:var(--accent);border-radius:20px;display:flex;align-items:center;justify-content:center;font-size:32px;margin:0 auto 12px}
+.profile-name{font-family:var(--font);font-size:22px;font-weight:800;margin-bottom:6px;letter-spacing:-0.4px}
+.profile-plan{display:inline-flex;align-items:center;gap:5px;background:rgba(245,200,66,0.1);border:0.5px solid rgba(245,200,66,0.2);border-radius:20px;padding:5px 14px;font-size:11px;color:var(--gold);font-weight:700}
+.prof-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}
+.prof-stat{background:var(--card);border-radius:14px;padding:16px 10px;text-align:center;border:0.5px solid var(--border)}
+.prof-stat-val{font-family:var(--font);font-size:26px;font-weight:800;margin-bottom:4px}
+.prof-stat-lbl{font-size:10px;color:var(--text3)}
+.my-picks-card{background:var(--card);border-radius:16px;border:0.5px solid var(--border2);overflow:hidden;margin-bottom:14px}
+.picks-header{padding:14px 18px;border-bottom:0.5px solid var(--border);font-family:var(--font);font-size:15px;font-weight:800}
+.pick-entry{display:flex;align-items:center;padding:12px 18px;border-bottom:0.5px solid var(--border);gap:10px}
+.pick-entry:last-child{border-bottom:none}
+.pick-match-info{flex:1}
+.pick-match-flags{font-size:18px;letter-spacing:3px;margin-bottom:2px}
+.pick-match-name{font-size:11px;color:var(--text3)}
+.pick-score-saved{font-family:var(--font);font-size:16px;font-weight:800;color:var(--text);background:var(--card2);padding:5px 12px;border-radius:8px}
+.pick-status{font-size:11px;font-weight:700;margin-left:4px}
+.pick-status.wait{color:var(--text3)}
+.sub-cta{background:var(--card);border-radius:20px;padding:24px 20px;margin-bottom:14px;border:0.5px solid rgba(0,229,160,0.18);text-align:center;position:relative;overflow:hidden}
+.sub-cta::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% 0%,rgba(0,229,160,0.05),transparent 65%);pointer-events:none}
+.sub-price{font-family:var(--font);font-size:40px;font-weight:800;color:var(--accent);letter-spacing:-1px;margin-bottom:4px}
+.sub-period{font-size:13px;color:var(--text2);margin-bottom:18px}
+.sub-features{list-style:none;text-align:left;margin-bottom:20px}
+.sub-feature{display:flex;align-items:center;gap:9px;padding:6px 0;font-size:13px;color:var(--text2)}
+.sub-check{color:var(--accent);font-size:15px}
+.btn-sub{width:100%;background:var(--accent);color:#000;border:none;border-radius:14px;padding:18px;font-family:var(--font);font-size:16px;font-weight:800;cursor:pointer;transition:all .15s;letter-spacing:-0.4px;touch-action:manipulation;min-height:56px;}
+.btn-sub:active{transform:scale(0.98)}
+.bottom-nav{position:absolute;bottom:0;left:0;right:0;background:rgba(11,15,28,0.97);border-top:0.5px solid var(--border2);display:flex;padding-bottom:var(--safe-bottom);z-index:20;backdrop-filter:blur(12px)}
+.bn-item{flex:1;display:flex;flex-direction:column;align-items:center;padding:12px 4px;cursor:pointer;gap:3px;touch-action:manipulation;min-height:56px;}
+.bn-item:active{opacity:.6}
+.bn-icon{font-size:22px;transition:transform .2s}
+.bn-item.active .bn-icon{transform:scale(1.12)}
+.bn-label{font-size:10px;color:var(--text3);font-weight:600;letter-spacing:0.2px}
+.bn-item.active .bn-label{color:var(--accent)}
+.toast{position:fixed;bottom:88px;left:50%;transform:translateX(-50%);background:var(--accent);color:#000;font-family:var(--font);font-size:13px;font-weight:800;padding:11px 22px;border-radius:20px;z-index:100;opacity:0;transition:opacity .3s;white-space:nowrap;pointer-events:none}
+.toast.show{opacity:1}
+.notif-panel{position:absolute;top:0;left:0;right:0;background:var(--bg2);border-bottom:0.5px solid var(--border2);z-index:50;transform:translateY(-100%);transition:transform .3s cubic-bezier(.34,1.56,.64,1);padding:calc(var(--safe-top) + 58px) 20px 20px}
+.notif-panel.open{transform:translateY(0)}
+.notif-panel-title{font-family:var(--font);font-size:18px;font-weight:800;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between}
+.notif-item{display:flex;gap:10px;padding:12px 0;border-bottom:0.5px solid var(--border);align-items:flex-start}
+.notif-icon{width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.ni-green{background:rgba(0,229,160,0.1)}.ni-gold{background:rgba(245,200,66,0.1)}.ni-purple{background:rgba(168,85,247,0.1)}
+.notif-body{flex:1}
+.notif-title-t{font-size:13px;font-weight:600;color:var(--text);margin-bottom:2px}
+.notif-desc{font-size:11px;color:var(--text2);line-height:1.4}
+.notif-time{font-size:10px;color:var(--text3);margin-top:3px}
+.section-label{font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:12px}
+.api-status{display:flex;align-items:center;gap:6px;font-size:10px;color:var(--text3);margin-bottom:12px}
+.api-dot{width:7px;height:7px;border-radius:50%;background:var(--accent);animation:pulse 2s infinite}
+.api-dot.offline{background:var(--red);animation:none}
+.live-badge{display:inline-flex;align-items:center;gap:4px;background:var(--red);color:#fff;font-size:10px;font-weight:800;padding:3px 8px;border-radius:6px;animation:livePulse 1.5s infinite}
+@keyframes livePulse{0%,100%{opacity:1}50%{opacity:0.6}}
+.live-dot{width:5px;height:5px;border-radius:50%;background:#fff}
+.finished-badge{display:inline-flex;align-items:center;gap:4px;background:rgba(0,229,160,0.15);color:var(--accent);font-size:10px;font-weight:700;padding:3px 8px;border-radius:6px}
+.score-digit.live{border-color:var(--red)!important;color:var(--red)!important}
+.score-digit.final{border-color:var(--accent)!important;color:var(--accent)!important}
+.match-card.live-game{border-color:rgba(255,77,109,0.5)!important}
+.match-card.live-game .card-top-strip{background:linear-gradient(90deg,var(--red),rgba(255,77,109,0.1))!important}
+.match-card.finished{opacity:0.88}
+.refresh-bar{display:flex;align-items:center;justify-content:space-between;padding:4px 0;margin-bottom:8px}
+.last-update{font-size:10px;color:var(--text3)}
+.btn-refresh{background:var(--card);border:0.5px solid var(--border2);border-radius:8px;color:var(--accent);font-size:11px;font-weight:600;padding:10px 16px;cursor:pointer;touch-action:manipulation;min-height:44px;}
+.result-box{display:flex;align-items:center;justify-content:center;gap:8px;padding:8px 12px;border-radius:10px;margin-bottom:10px;background:rgba(0,229,160,0.08);border:0.5px solid rgba(0,229,160,0.2)}
+.result-box-text{font-size:12px;font-weight:600;color:var(--accent)}
+
+/* ── SISTEMA DE ALERTAS ── */
+.alert-bell {
+  position: relative;
+  cursor: pointer;
+  font-size: 22px;
+  padding: 6px;
+  transition: transform 0.2s;
+}
+.alert-bell:hover { transform: scale(1.1); }
+.alert-badge {
+  position: absolute;
+  top: -2px; right: -2px;
+  background: #ff4d6d;
+  color: #fff;
+  font-size: 10px;
+  font-family: var(--font);
+  font-weight: 800;
+  min-width: 16px; height: 16px;
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  padding: 0 3px;
+  animation: pulse-red 2s infinite;
+}
+@keyframes pulse-red { 0%,100%{opacity:1} 50%{opacity:0.6} }
+
+.alerts-drawer {
+  position: fixed;
+  top: 0; right: -100%;
+  width: min(380px, 100vw);
+  height: 100vh;
+  background: #0b1120;
+  border-left: 0.5px solid rgba(255,255,255,0.08);
+  z-index: 200;
+  display: flex;
+  flex-direction: column;
+  transition: right 0.35s cubic-bezier(0.4,0,0.2,1);
+  box-shadow: -8px 0 40px rgba(0,0,0,0.5);
+}
+.alerts-drawer.open { right: 0; }
+
+.alerts-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 20px 16px;
+  border-bottom: 0.5px solid rgba(255,255,255,0.06);
+  padding-top: calc(var(--safe-top) + 20px);
+}
+.alerts-header h3 {
+  font-family: var(--font);
+  font-size: 18px;
+  font-weight: 700;
+}
+.alerts-close {
+  font-size: 24px;
+  cursor: pointer;
+  color: #8896b3;
+  padding: 4px 8px;
+}
+
+.alerts-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 12px;
+  -webkit-overflow-scrolling: touch;
+}
+
+.alert-item {
+  background: #0f1729;
+  border: 0.5px solid rgba(255,255,255,0.06);
+  border-radius: 14px;
+  padding: 14px 16px;
+  margin-bottom: 10px;
+  cursor: pointer;
+  transition: border-color 0.2s;
+  position: relative;
+}
+.alert-item.unread {
+  border-color: rgba(0,229,160,0.2);
+  background: rgba(0,229,160,0.04);
+}
+.alert-item.unread::before {
+  content: '';
+  position: absolute;
+  top: 14px; left: -1px;
+  width: 3px; height: calc(100% - 28px);
+  background: var(--accent);
+  border-radius: 2px;
+}
+.alert-item.priority-high.unread { border-color: rgba(255,77,109,0.35); background: rgba(255,77,109,0.04); }
+.alert-item.priority-high.unread::before { background: #ff4d6d; }
+
+.alert-title {
+  font-family: var(--font);
+  font-weight: 700;
+  font-size: 14px;
+  margin-bottom: 5px;
+  line-height: 1.3;
+}
+.alert-body {
+  font-size: 12.5px;
+  color: #8896b3;
+  line-height: 1.5;
+  margin-bottom: 6px;
+}
+.alert-meta {
+  font-size: 11px;
+  color: #3d4f6e;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.alert-type-badge {
+  font-size: 10px;
+  font-family: var(--font);
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+.alert-type-badge.news { background: rgba(168,85,247,0.2); color: #a855f7; }
+.alert-type-badge.odds_change { background: rgba(245,200,66,0.2); color: #f5c842; }
+.alert-type-badge.prediction_change { background: rgba(255,77,109,0.2); color: #ff4d6d; }
+
+.alerts-empty {
+  text-align: center;
+  padding: 60px 20px;
+  color: #3d4f6e;
+}
+.alerts-empty .icon { font-size: 48px; margin-bottom: 12px; }
+.alerts-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 199;
+  display: none;
+}
+.alerts-overlay.open { display: block; }
+
+/* Toast notification */
+.toast-notif {
+  position: fixed;
+  top: calc(var(--safe-top) + 70px);
+  left: 50%;
+  transform: translateX(-50%) translateY(-20px);
+  background: #0f1729;
+  border: 0.5px solid rgba(0,229,160,0.3);
+  border-radius: 14px;
+  padding: 12px 18px;
+  max-width: calc(100vw - 40px);
+  z-index: 300;
+  opacity: 0;
+  transition: all 0.3s ease;
+  pointer-events: none;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.5);
+}
+.toast-notif.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+.toast-title { font-family: var(--font); font-weight: 700; font-size: 13px; margin-bottom: 3px; }
+.toast-body { font-size: 12px; color: #8896b3; }
+
+</style>
+</head>
+<body>
+<div id="app">
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-top">
+    <div class="logo"><img src="https://app-golcerto.onrender.com/logo.jpg" style="width:42px;height:42px;object-fit:cover;border-radius:10px;display:block;" alt="GolCerto 2026"><div class="logo-text">Gol<span>Certo</span> 2026</div></div>
+    <div class="header-actions">
+      <!-- VIP TELEGRAM SUBSCRIPTION BUTTON -->
+      <button id="vip-telegram-btn" onclick="handleSubscribe('Standard', 19.90)" style="background: linear-gradient(135deg, #229ED9, #1a7ab5); border: 1px solid rgba(255,255,255,0.15); color: #fff; border-radius: 12px; padding: 6px 12px; font-size: 11px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 5px; outline: none; box-shadow: 0 4px 10px rgba(34,158,217,0.25); text-transform: uppercase;">
+        <span>✈️ VIP - Telegram</span>
+      </button>
+      <div class="btn-notif" ontouchend="openAlerts();event.preventDefault()" onclick="openAlerts()" style="position:relative">🔔<span id="alert-badge" class="alert-badge" style="display:none">0</span></div>
+    </div>
+  </div>
+  <div class="nav-tabs">
+    <div class="nav-tab active" ontouchend="showPage('matches',this);event.preventDefault()" onclick="showPage('matches',this)">Partidas</div>
+    <div class="nav-tab" ontouchend="showPage('rankings',this);event.preventDefault()" onclick="showPage('rankings',this)">Favoritos</div>
+    <div class="nav-tab" ontouchend="showPage('stats',this);event.preventDefault()" onclick="showPage('stats',this)">Estatísticas</div>
+  </div>
+</div>
+
+<!-- CONTENT -->
+<div class="scroll-content">
+
+<!-- PAGE: PARTIDAS -->
+<div class="page active" id="page-matches">
+  <div class="day-chips" id="day-chips-container">
+    <div class="day-chip active" ontouchend="filterMatches('all',this);event.preventDefault()" onclick="filterMatches('all',this)">Todos</div>
+    <div class="day-chip" ontouchend="filterMatches('A',this);event.preventDefault()" onclick="filterMatches('A',this)">Grupo A</div>
+    <div class="day-chip" ontouchend="filterMatches('B',this);event.preventDefault()" onclick="filterMatches('B',this)">Grupo B</div>
+    <div class="day-chip" ontouchend="filterMatches('C',this);event.preventDefault()" onclick="filterMatches('C',this)">Grupo C</div>
+    <div class="day-chip" ontouchend="filterMatches('D',this);event.preventDefault()" onclick="filterMatches('D',this)">Grupo D</div>
+    <div class="day-chip" ontouchend="filterMatches('E',this);event.preventDefault()" onclick="filterMatches('E',this)">Grupo E</div>
+    <div class="day-chip" ontouchend="filterMatches('F',this);event.preventDefault()" onclick="filterMatches('F',this)">Grupo F</div>
+    <div class="day-chip" ontouchend="filterMatches('G',this);event.preventDefault()" onclick="filterMatches('G',this)">Grupo G</div>
+    <div class="day-chip" ontouchend="filterMatches('H',this);event.preventDefault()" onclick="filterMatches('H',this)">Grupo H</div>
+    <div class="day-chip" ontouchend="filterMatches('I',this);event.preventDefault()" onclick="filterMatches('I',this)">Grupo I</div>
+    <div class="day-chip" ontouchend="filterMatches('J',this);event.preventDefault()" onclick="filterMatches('J',this)">Grupo J</div>
+    <div class="day-chip" ontouchend="filterMatches('K',this);event.preventDefault()" onclick="filterMatches('K',this)">Grupo K</div>
+    <div class="day-chip" ontouchend="filterMatches('L',this);event.preventDefault()" onclick="filterMatches('L',this)">Grupo L</div>
+  </div>
+  <div class="api-status"><div class="api-dot" id="api-dot"></div><span id="api-status-text">Conectando à API...</span></div>
+  <div class="refresh-bar"><span class="last-update" id="last-update">--</span><button class="btn-refresh" ontouchend="refreshAll();event.preventDefault()" onclick="refreshAll()">↻ Atualizar</button></div>
+  
+  <!-- ROUND PROGRESS/UNLOCK STATUS PANEL -->
+  <div id="round-unlock-status" style="margin-bottom: 16px; background: var(--card); border: 0.5px solid var(--border2); border-radius: 14px; padding: 12px 16px; display: flex; flex-direction: column; gap: 8px;">
+    <div style="display: flex; justify-content: space-between; align-items: center; font-size: 11px;">
+      <span id="round-status-text" style="color: var(--text2); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">⚽ Fase de Grupos · Rodada 1</span>
+      <span id="round-status-pct" style="color: var(--gold); font-weight: bold; font-family: var(--font); font-size: 13px;">0% Concluída</span>
+    </div>
+    <div style="background: rgba(255,255,255,0.05); height: 5px; border-radius: 3px; overflow: hidden; width: 100%;">
+      <div id="round-status-bar" style="height: 100%; background: linear-gradient(90deg, var(--gold), #d4a017); width: 0%; border-radius: 3px; transition: width 0.5s ease;"></div>
+    </div>
+    <div id="round-status-desc" style="font-size: 10px; color: var(--text2); line-height: 1.3;">
+      Os palpites da Rodada 2 serão liberados automaticamente quando 75% da Rodada 1 estiver concluída.
+    </div>
+  </div>
+
+  <div id="matches-container">
+    <div class="loading-card">
+      <div class="loading-spinner"></div>
+      <div class="loading-text">Carregando predições da IA...</div>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE: RANKINGS -->
+<div class="page" id="page-rankings">
+  <div class="rank-hero">
+    <div class="rank-hero-label">Predição IA · Copa 2026</div>
+    <div class="rank-hero-title">Quem vai ser campeão?</div>
+    <div class="rank-hero-sub">Simulação Monte Carlo · 10.000 torneios simulados</div>
+  </div>
+  <div class="section-label">Probabilidades de título</div>
+  <div id="rankings-container">
+    <div class="loading-card"><div class="loading-spinner"></div><div class="loading-text">Simulando torneios...</div></div>
+  </div>
+</div>
+
+<!-- PAGE: STATS -->
+<div class="page" id="page-stats">
+  <div class="section-label">Gamificação da Inteligência Artificial</div>
+  <div class="ai-gamification-card" id="ai-gamification-card" style="background:var(--card); border:1px solid rgba(197,168,92,0.3); border-radius:12px; padding:20px; margin-bottom:20px; display:flex; flex-direction:column; gap:16px; box-shadow:0 8px 32px rgba(0,0,0,0.5)">
+    <div style="display:flex; align-items:center; gap:14px">
+      <div style="width:50px; height:50px; border-radius:50%; background:rgba(197,168,92,0.1); border:1.5px solid var(--gold); display:flex; align-items:center; justify-content:center; font-size:24px; position:relative">
+        🤖
+        <div class="ai-pulse" style="position:absolute; width:100%; height:100%; border:2px solid var(--gold); border-radius:50%; opacity:0.7"></div>
+      </div>
+      <div>
+        <div style="font-size:16px; font-weight:bold; color:#fff">🤖 Robô de Inteligência Artificial</div>
+      </div>
+    </div>
+    
+    <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; background:rgba(255,255,255,0.02); border-radius:8px; padding:12px; text-align:center">
+      <div>
+        <div style="font-size:20px; font-weight:bold; color:var(--gold)" id="ai-total-points">0</div>
+        <div style="font-size:10px; color:var(--text3)">Pontos Totais</div>
+      </div>
+      <div>
+        <div style="font-size:20px; font-weight:bold; color:var(--accent)" id="ai-accuracy">0%</div>
+        <div style="font-size:10px; color:var(--text3)">Aproveitamento</div>
+      </div>
+      <div>
+        <div style="font-size:20px; font-weight:bold; color:#fff" id="ai-analyzed">0</div>
+        <div style="font-size:10px; color:var(--text3)">Jogos Encerrados</div>
+      </div>
+    </div>
+    
+    <div style="font-size:11px; color:var(--text2)">
+      <div style="font-weight:bold; margin-bottom:8px; text-transform:uppercase; font-size:10px; letter-spacing:0.5px; color:var(--gold)">Detalhamento de Acertos</div>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px">
+        <div style="display:flex; justify-content:space-between; background:rgba(255,255,255,0.01); padding:6px 10px; border-radius:4px">
+          <span>🎯 Placar Exato (5 pts)</span>
+          <strong style="color:var(--gold)" id="ai-exact-count">0</strong>
+        </div>
+        <div style="display:flex; justify-content:space-between; background:rgba(255,255,255,0.01); padding:6px 10px; border-radius:4px">
+          <span>⚽ Vencedor + Saldo (3 pts)</span>
+          <strong style="color:var(--accent)" id="ai-vd-count">0</strong>
+        </div>
+        <div style="display:flex; justify-content:space-between; background:rgba(255,255,255,0.01); padding:6px 10px; border-radius:4px">
+          <span>✌️ Apenas Vencedor (2 pts)</span>
+          <strong id="ai-winner-count">0</strong>
+        </div>
+        <div style="display:flex; justify-content:space-between; background:rgba(255,255,255,0.01); padding:6px 10px; border-radius:4px">
+          <span>🥅 Gols de 1 Time (1 pt)</span>
+          <strong id="ai-oneteam-count">0</strong>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-label">⚡ Simulador Head-to-Head (H2H IA)</div>
+  <div class="h2h-simulator-card" style="background:var(--card); border:1px solid rgba(197,168,92,0.3); border-radius:12px; padding:20px; margin-bottom:20px; box-shadow:0 8px 32px rgba(0,0,0,0.5)">
+    <div style="font-size:11px; color:var(--text3); margin-bottom:12px; line-height:1.4">Escolha duas seleções quaisquer e simule um confronto direto usando o modelo preditivo de IA Dixon-Coles do GolCerto.</div>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:14px">
+      <div>
+        <label style="font-size:10px; color:var(--gold); font-weight:bold; text-transform:uppercase">Seleção A</label>
+        <select id="h2h-team-a" style="width:100%; background:#000; border:1px solid rgba(197,168,92,0.4); color:#fff; border-radius:6px; padding:10px; font-size:13px; font-weight:bold; margin-top:4px; outline:none; font-family:inherit"></select>
+      </div>
+      <div>
+        <label style="font-size:10px; color:var(--gold); font-weight:bold; text-transform:uppercase">Seleção B</label>
+        <select id="h2h-team-b" style="width:100%; background:#000; border:1px solid rgba(197,168,92,0.4); color:#fff; border-radius:6px; padding:10px; font-size:13px; font-weight:bold; margin-top:4px; outline:none; font-family:inherit"></select>
+      </div>
+    </div>
+    <button onclick="simulateH2H()" style="width:100%; background:var(--gold); color:#000; border:none; border-radius:6px; padding:12px; font-weight:bold; font-size:13px; cursor:pointer; transition:all 0.2s">⚡ Simular Confronto Direto</button>
+    
+    <!-- H2H RESULT PANEL -->
+    <div id="h2h-result-panel" style="display:none; margin-top:16px; padding-top:16px; border-top:1px dashed rgba(255,255,255,0.08)">
+      <div style="text-align:center; margin-bottom:14px">
+        <div style="font-size:11px; color:var(--text3); text-transform:uppercase; letter-spacing:0.5px">Placar mais provável sugerido</div>
+        <div style="font-size:32px; font-weight:bold; color:var(--gold); font-family:'Oswald',sans-serif; margin-top:4px" id="h2h-predicted-score">2 × 1</div>
+      </div>
+      <div style="margin-bottom:14px">
+        <div style="display:flex; justify-content:space-between; font-size:10px; color:var(--text2); margin-bottom:4px">
+          <span id="h2h-lbl-win-a">Time A: 50%</span>
+          <span>Empate: <span id="h2h-lbl-draw">20%</span></span>
+          <span id="h2h-lbl-win-b">Time B: 30%</span>
+        </div>
+        <div style="display:flex; height:6px; border-radius:3px; overflow:hidden">
+          <div id="h2h-bar-win-a" style="background:var(--accent); width:50%"></div>
+          <div id="h2h-bar-draw" style="background:var(--gold); width:20%"></div>
+          <div id="h2h-bar-win-b" style="background:var(--red); width:30%"></div>
+        </div>
+      </div>
+      <div style="font-size:11px; line-height:1.6; color:var(--text); background:rgba(255,255,255,0.01); border:1px solid rgba(255,255,255,0.05); padding:10px; border-radius:6px; text-align:left" id="h2h-analysis">
+        Análise tática...
+      </div>
+    </div>
+  </div>
+
+  <!-- GROUP ANALYZER & SIMULATOR SECTION -->
+  <div class="section-label">📋 Simulador e Analisador de Grupos por IA</div>
+  <div class="group-simulator-card" style="background:var(--card); border:1px solid rgba(197,168,92,0.3); border-radius:12px; padding:20px; margin-bottom:20px; box-shadow:0 8px 32px rgba(0,0,0,0.5)">
+    <div style="font-size:11px; color:var(--text3); margin-bottom:12px; line-height:1.4">Selecione um grupo da Copa do Mundo para rodar simulações estatísticas locais e analisar o Parecer Técnico gerado pela IA.</div>
+    <div style="margin-bottom:14px">
+      <label style="font-size:10px; color:var(--gold); font-weight:bold; text-transform:uppercase">Selecione o Grupo</label>
+      <select id="group-sim-select" onchange="loadGroupSim()" style="width:100%; background:#000; border:1px solid rgba(197,168,92,0.4); color:#fff; border-radius:6px; padding:10px; font-size:13px; font-weight:bold; margin-top:4px; outline:none; font-family:inherit">
+        <option value="A">Grupo A</option>
+        <option value="B">Grupo B</option>
+        <option value="C">Grupo C</option>
+        <option value="D">Grupo D</option>
+        <option value="E">Grupo E</option>
+        <option value="F">Grupo F</option>
+        <option value="G">Grupo G</option>
+        <option value="H">Grupo H</option>
+        <option value="I">Grupo I</option>
+        <option value="J">Grupo J</option>
+        <option value="K">Grupo K</option>
+        <option value="L">Grupo L</option>
+      </select>
+    </div>
+    
+    <!-- Analysis text -->
+    <div id="group-sim-opinion" style="background:rgba(255,255,255,0.02); border:1px solid rgba(197,168,92,0.1); border-radius:8px; padding:12px; font-size:11px; line-height:1.5; color:var(--text); margin-bottom:14px;">
+      Carregando parecer técnico do grupo...
+    </div>
+
+    <!-- Monte Carlo classification chances -->
+    <div style="margin-bottom:14px">
+      <div style="font-weight:bold; margin-bottom:8px; text-transform:uppercase; font-size:10px; letter-spacing:0.5px; color:var(--gold)">Chances de Classificação (Monte Carlo Local)</div>
+      <div id="group-sim-chances-container" style="display:flex; flex-direction:column; gap:8px;">
+        <!-- Filled dynamically -->
+      </div>
+    </div>
+
+    <button onclick="runGroupMatchesSim()" style="width:100%; background:transparent; border:1px solid var(--gold); color:var(--gold); border-radius:6px; padding:10px; font-weight:bold; font-size:12px; cursor:pointer; margin-bottom:14px; transition:all 0.2s">🎲 Simular Partidas do Grupo</button>
+
+    <!-- Simulated Matches Results -->
+    <div id="group-sim-results-container" style="display:none; margin-bottom:14px; background:rgba(0,0,0,0.2); border-radius:8px; padding:12px;">
+      <div style="font-weight:bold; margin-bottom:8px; text-transform:uppercase; font-size:9px; letter-spacing:0.5px; color:var(--text3)">Resultados da Simulação</div>
+      <div id="group-sim-results-list" style="display:flex; flex-direction:column; gap:6px; font-size:11px;"></div>
+    </div>
+
+    <!-- Dynamic Standings table -->
+    <div>
+      <div style="font-weight:bold; margin-bottom:8px; text-transform:uppercase; font-size:10px; letter-spacing:0.5px; color:var(--gold)">Tabela Dinâmica do Grupo</div>
+      <div style="overflow-x:auto">
+        <table style="width:100%; border-collapse:collapse; font-size:11px; text-align:center;">
+          <thead>
+            <tr style="border-bottom:1px solid rgba(255,255,255,0.08); color:var(--text3); font-size:9px;">
+              <th style="text-align:left; padding:6px 4px;">TEAM</th>
+              <th>P</th>
+              <th>V</th>
+              <th>E</th>
+              <th>D</th>
+              <th>GP</th>
+              <th>SG</th>
+            </tr>
+          </thead>
+          <tbody id="group-sim-table-body">
+            <!-- Filled dynamically -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-label">Força de todas as seleções</div>
+  <input type="text" id="stats-search" placeholder="🔍 Buscar seleção..." oninput="filterStats()" style="width:100%; box-sizing:border-box; background:#000; border:1px solid rgba(197,168,92,0.3); border-radius:8px; padding:10px; color:#fff; font-size:12px; margin-bottom:14px; outline:none; font-family:inherit">
+  <div id="stats-container">
+    <div class="loading-card"><div class="loading-spinner"></div><div class="loading-text">Carregando estatísticas...</div></div>
+  </div>
+</div>
+
+
+
+<!-- PAGE: PROFILE -->
+<div class="page" id="page-profile">
+  <div class="profile-header" style="text-align:center; padding:20px 0 18px;">
+    <div class="avatar" style="width:72px; height:72px; background:var(--accent); border-radius:20px; display:flex; align-items:center; justify-content:center; font-size:32px; margin:0 auto 12px;">👤</div>
+    <div class="profile-name" style="font-family:var(--font); font-size:22px; font-weight:800; margin-bottom:6px; letter-spacing:-0.4px;">Seu Perfil</div>
+    <div class="profile-plan" style="display:inline-flex; align-items:center; gap:5px; background:rgba(245,200,66,0.1); border:0.5px solid rgba(245,200,66,0.2); border-radius:20px; padding:5px 14px; font-size:11px; color:var(--gold); font-weight:700;"><span class="badge-pro" style="background:#c5a85c; color:#000; font-family:var(--font); font-size:10px; font-weight:800; padding:5px 12px; border-radius:20px;">STANDARD</span></div>
+  </div>
+  
+  <div class="prof-stats" style="display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin: 16px 20px 20px;">
+    <div class="prof-stat" style="background:var(--card); border-radius:14px; padding:16px 10px; text-align:center; border:0.5px solid var(--border);"><div class="prof-stat-val" id="cnt-picks" style="font-family:var(--font); font-size:26px; font-weight:800; margin-bottom:4px; color:var(--gold)">0</div><div class="prof-stat-lbl" style="font-size:10px; color:var(--text3)">Palpites</div></div>
+    <div class="prof-stat" style="background:var(--card); border-radius:14px; padding:16px 10px; text-align:center; border:0.5px solid var(--border);"><div class="prof-stat-val" style="font-family:var(--font); font-size:26px; font-weight:800; margin-bottom:4px; color:var(--gold)">–</div><div class="prof-stat-lbl" style="font-size:10px; color:var(--text3)">Acertos</div></div>
+    <div class="prof-stat" style="background:var(--card); border-radius:14px; padding:16px 10px; text-align:center; border:0.5px solid var(--border);"><div class="prof-stat-val" style="font-family:var(--font); font-size:26px; font-weight:800; margin-bottom:4px; color:var(--gold)">–%</div><div class="prof-stat-lbl" style="font-size:10px; color:var(--text3)">Taxa</div></div>
+  </div>
+
+  <div class="my-picks-card" style="background:var(--card); border-radius:16px; border:0.5px solid var(--border2); overflow:hidden; margin:0 20px 20px;">
+    <div class="picks-header" style="padding:14px 18px; border-bottom:0.5px solid var(--border); font-family:var(--font); font-size:15px; font-weight:800;">📋 Meus Palpites Salvos</div>
+    <div id="picks-empty" style="padding:24px; text-align:center; color:var(--text3); font-size:13px; line-height:1.6">Você ainda não salvou palpites.<br>Abra uma partida e toque em <strong style="color:var(--text2)">Salvar palpite</strong>!</div>
+    <div id="picks-container"></div>
+  </div>
+
+  <div class="sub-cta" style="background:var(--card); border-radius:20px; padding:24px 20px; margin:0 20px 20px; border:0.5px solid rgba(197,168,92,0.15); text-align:center;">
+    <div class="sub-price" style="font-family:var(--font); font-size:32px; font-weight:800; color:var(--gold); margin-bottom:4px;">R$ 19,90</div>
+    <div class="sub-period" style="font-size:12px; color:var(--text2); margin-bottom:12px;">Plano Standard completo · Todos os 72 jogos</div>
+    <button class="btn-sub" onclick="handleSubscribe('Standard', 19.90)" style="width:100%; background:var(--gold); border:none; color:#000; font-family:var(--font); font-size:14px; font-weight:800; padding:12px; border-radius:10px; cursor:pointer;">Assinar Standard 🚀</button>
+  </div>
+</div>
+
+<!-- BEAUTIFUL CHECKOUT MODAL -->
+<div id="checkout-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); backdrop-filter:blur(8px); z-index:9999; align-items:center; justify-content:center;">
+  <div style="background:#0d0d0d; border: 1px solid var(--gold); border-radius: 16px; padding: 24px; width: 95%; max-width: 390px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); text-align:center; position:relative;">
+    <button onclick="closeCheckout()" style="position:absolute; top:12px; right:12px; background:none; border:none; color:var(--text3); font-size:18px; cursor:pointer;">&times;</button>
+    
+    <div style="color:var(--gold); font-size:11px; font-weight:bold; letter-spacing:1px; text-transform:uppercase; margin-bottom:8px;">Pagamento Seguro</div>
+    <div id="modal-plan-title" style="font-family:'Oswald', sans-serif; font-size:20px; color:#fff; margin-bottom:4px;">ASSINATURA STANDARD</div>
+    <div id="modal-plan-price" style="font-size:16px; font-weight:bold; color:var(--gold); margin-bottom:12px;">R$ 19,90</div>
+    
+    <!-- ORDER BUMP: ALERTAS VIP NO TELEGRAM -->
+    <div id="order-bump-container" style="background: rgba(197,168,92,0.06); border: 1px dashed var(--gold); border-radius: 10px; padding: 12px; margin-bottom: 15px; text-align: left; display: flex; align-items: flex-start; gap: 10px; cursor: pointer; transition: all 0.2s;" onclick="toggleOrderBumpCheckbox()">
+      <input type="checkbox" id="telegram-upsell-checkbox" style="margin-top: 3px; cursor: pointer; accent-color: var(--gold);" onclick="event.stopPropagation(); updateCheckoutPrice()">
+      <div style="flex: 1;">
+        <div style="font-size: 11px; font-weight: bold; color: #fff; display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
+          <span>✈️ Alertas VIP no Telegram</span>
+          <span style="color: var(--gold); font-size: 10px; background: rgba(197,168,92,0.15); padding: 2px 6px; border-radius: 4px;">+ R$ 9,90</span>
+        </div>
+        <div style="font-size: 10.5px; color: var(--text2); line-height: 1.4;">
+          Receba os alertas mais urgentes da IA (desfalques de última hora e mudanças de placares sugeridos) diretamente no seu Telegram, sem precisar abrir o app.
+        </div>
+      </div>
+    </div>
+    
+    <!-- QR Code Mockup -->
+    <div style="background:#fff; padding:15px; border-radius:12px; width:150px; height:150px; margin:0 auto 15px; display:flex; align-items:center; justify-content:center; box-shadow: 0 4px 15px rgba(255,255,255,0.1);">
+      <div style="width:120px; height:120px; background: repeating-conic-gradient(#000 0% 25%, transparent 0% 50%) 0 0/15px 15px, repeating-conic-gradient(#000 0% 25%, transparent 0% 50%) 7.5px 7.5px/15px 15px; opacity: 0.85;"></div>
+    </div>
+    
+    <div style="font-size:12px; color:var(--text2); margin-bottom:15px; line-height:1.4;">
+      Escaneie o QR Code acima no app do seu banco ou use a chave abaixo para pagar via <strong>PIX</strong>.
+    </div>
+    
+    <div style="background:#151515; border:1px solid rgba(255,255,255,0.08); border-radius:8px; padding:10px; display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+      <code id="pix-key" style="font-size:10px; color:var(--text3); word-break:break-all; text-align:left; max-width:80%;">golcerto2026.pix.standard.gateway.br/checkout/payment-key</code>
+      <button onclick="copyPixKey()" style="background:var(--gold); border:none; border-radius:4px; color:#000; padding:6px 10px; font-size:10px; font-weight:bold; cursor:pointer;">Copiar</button>
+    </div>
+    
+    <div id="checkout-status" style="font-size:12px; color:var(--gold); font-weight:bold; display:flex; align-items:center; justify-content:center; gap:8px;">
+      <div class="loading-spinner" style="width:14px; height:14px; border-width:2px; margin:0;"></div>
+      Aguardando confirmação do PIX...
+    </div>
+    
+    <!-- LINK TELEGRAM DISPONÍVEL PÓS PAGAMENTO -->
+    <div id="telegram-success-link-container" style="display:none; margin-top: 15px;">
+      <a href="https://t.me/+OUUV3GRyM4YwYmJh" target="_blank" style="display: flex; align-items: center; justify-content: center; gap: 8px; background: #229ED9; color: #fff; font-family: var(--font); font-weight: bold; text-decoration: none; text-transform: uppercase; border-radius: 8px; padding: 12px; font-size: 13px; box-shadow: 0 4px 12px rgba(34,158,217,0.3); transition: transform 0.2s; margin-bottom: 10px;">
+        <span>✈️ Entrar no Canal VIP Telegram</span>
+      </a>
+      <button onclick="closeCheckout()" style="background: transparent; border: 1px solid rgba(255,255,255,0.15); color: var(--text2); border-radius: 8px; padding: 10px; font-size: 11px; cursor: pointer; width: 100%;">
+        Fechar e acessar o app
+      </button>
+    </div>
+    
+    <button id="simulate-payment-btn" onclick="simulatePayment()" style="margin-top:15px; background:none; border:1px dashed rgba(255,255,255,0.15); color:var(--text3); border-radius:6px; padding:6px 12px; font-size:10px; cursor:pointer; width:100%;">
+      [Simular confirmação automática do banco]
+    </button>
+  </div>
+</div>
+
+<div class="bottom-nav">
+  <div class="bn-item active" id="bn-matches" ontouchend="showPage('matches',null,'bn-matches');event.preventDefault()" onclick="showPage('matches',null,'bn-matches')"><span class="bn-icon">⚽</span><span class="bn-label">Partidas</span></div>
+  <div class="bn-item" id="bn-rankings" ontouchend="showPage('rankings',null,'bn-rankings');event.preventDefault()" onclick="showPage('rankings',null,'bn-rankings')"><span class="bn-icon">🏆</span><span class="bn-label">Favoritos</span></div>
+  <div class="bn-item" id="bn-stats" ontouchend="showPage('stats',null,'bn-stats');event.preventDefault()" onclick="showPage('stats',null,'bn-stats')"><span class="bn-icon">📊</span><span class="bn-label">Estatísticas</span></div>
+</div>
+<div class="toast" id="toast"></div>
+</div>
+
+<script>
+// ── CONFIGURAÇÃO DA API ──────────────────────────────────────────────────────
+const API = 'https://app-golcerto.onrender.com';
+const TEAM_TRANSLATIONS = {
+  'Brazil': 'Brasil', 'Mexico': 'México', 'Argentina': 'Argentina', 'Germany': 'Alemanha',
+  'England': 'Inglaterra', 'Portugal': 'Portugal', 'France': 'França', 'Spain': 'Espanha',
+  'Netherlands': 'Holanda', 'Belgium': 'Bélgica', 'Croatia': 'Croácia', 'Uruguay': 'Uruguai',
+  'Colombia': 'Colômbia', 'Japan': 'Japão', 'Morocco': 'Marrocos', 'USA': 'EUA',
+  'South Korea': 'Coreia do Sul', 'Serbia': 'Sérvia', 'Denmark': 'Dinamarca', 'Switzerland': 'Suíça',
+  'South Africa': 'África do Sul', 'Qatar': 'Catar', 'Canada': 'Canadá', 'Bosnia': 'Bósnia',
+  'Australia': 'Austrália', 'Turkey': 'Turquia', 'Haiti': 'Haiti', 'Scotland': 'Escócia',
+  'Ivory Coast': 'Costa do Marfim', 'Ecuador': 'Equador', 'Curacao': 'Curaçao', 'Sweden': 'Suécia',
+  'Tunisia': 'Tunísia', 'Egypt': 'Egito', 'Iran': 'Irã', 'New Zealand': 'Nova Zelândia',
+  'Saudi Arabia': 'Arábia Saudita', 'Cape Verde': 'Cabo Verde', 'Senegal': 'Senegal',
+  'Iraq': 'Iraque', 'Norway': 'Noruega', 'Algeria': 'Argélia', 'Austria': 'Áustria',
+  'Jordan': 'Jordânia', 'Congo DR': 'RD Congo', 'Uzbekistan': 'Uzbequistão', 'Ghana': 'Gana',
+  'Panama': 'Panamá', 'Czech Republic': 'República Tcheca', 'Paraguay': 'Paraguai',
+  'Togo': 'Togo', 'United States': 'EUA'
+};
+const tName = (name) => TEAM_TRANSLATIONS[name] || name;
+let liveResults = {};
+let autoRefreshTimer = null;
+
+async function fetchLiveResults() {
+  try {
+    const r = await fetch(API + '/matches', {signal: AbortSignal.timeout(8000)});
+    if (!r.ok) return;
+    const data = await r.json();
+    (data.matches || []).forEach(m => {
+      if (!m.home || !m.away) return;
+      const key = m.home + '_' + m.away;
+      const st = m.status || '';
+      if (['FINISHED','IN_PLAY','PAUSED'].includes(st)) {
+        liveResults[key] = {
+          homeScore: (m.score||{}).home ?? null,
+          awayScore: (m.score||{}).away ?? null,
+          status: (st==='IN_PLAY'||st==='PAUSED') ? 'LIVE' : 'FINISHED',
+        };
+      }
+    });
+  } catch(e) {}
+}
+
+function getMatchStatus(home, away) {
+  return liveResults[home + '_' + away] || null;
+}
+
+async function refreshAll() {
+  const el = document.getElementById('last-update');
+  if (el) el.textContent = 'Atualizando...';
+  await fetchLiveResults();
+  await loadMatches();
+}
+
+function startAutoRefresh() {
+  if (autoRefreshTimer) clearInterval(autoRefreshTimer);
+  autoRefreshTimer = setInterval(refreshAll, 3 * 60 * 1000);
+}
+
+// Partidas da Copa 2026 para demonstração + predição real via API
+const COPA_MATCHES = [
+  // GRUPO A
+  {home:'Mexico',      away:'South Africa',   group:'A', date:'11/06', time:'16:00', venue:'Azteca · Cidade do México',    oh:1.90, od:3.40, oa:3.80},
+  {home:'South Korea', away:'Czech Republic', group:'A', date:'11/06', time:'23:00', venue:'Estadio Akron · Guadalajara',  oh:2.10, od:3.20, oa:3.40},
+  {home:'Czech Republic',away:'South Africa', group:'A', date:'18/06', time:'13:00', venue:'Mercedes-Benz · Atlanta',     oh:2.20, od:3.30, oa:3.10},
+  {home:'Mexico',      away:'South Korea',    group:'A', date:'18/06', time:'22:00', venue:'Estadio Akron · Guadalajara',  oh:1.85, od:3.50, oa:4.00},
+  {home:'Czech Republic',away:'Mexico',       group:'A', date:'24/06', time:'22:00', venue:'Azteca · Cidade do México',   oh:3.20, od:3.20, oa:2.10},
+  {home:'South Africa',away:'South Korea',   group:'A', date:'24/06', time:'22:00', venue:'Estadio BBVA · Monterrey',    oh:2.80, od:3.10, oa:2.50},
+  // GRUPO B
+  {home:'Canada',      away:'Bosnia',         group:'B', date:'12/06', time:'16:00', venue:'BMO Field · Toronto',         oh:1.80, od:3.40, oa:4.20},
+  {home:'Qatar',       away:'Switzerland',    group:'B', date:'13/06', time:'16:00', venue:'Levi\'s Stadium · SF',        oh:3.50, od:3.20, oa:2.00},
+  {home:'Switzerland', away:'Bosnia',         group:'B', date:'18/06', time:'16:00', venue:'SoFi Stadium · Los Angeles',  oh:1.80, od:3.40, oa:4.20},
+  {home:'Canada',      away:'Qatar',          group:'B', date:'18/06', time:'19:00', venue:'BC Place · Vancouver',        oh:1.50, od:3.80, oa:6.00},
+  {home:'Switzerland', away:'Canada',         group:'B', date:'24/06', time:'16:00', venue:'BC Place · Vancouver',        oh:2.40, od:3.20, oa:2.90},
+  {home:'Bosnia',      away:'Qatar',          group:'B', date:'24/06', time:'16:00', venue:'Lumen Field · Seattle',       oh:1.70, od:3.50, oa:4.80},
+  // GRUPO C
+  {home:'Brazil',      away:'Morocco',        group:'C', date:'13/06', time:'19:00', venue:'MetLife · Nova York/NJ',      oh:1.55, od:3.90, oa:5.50},
+  {home:'Haiti',       away:'Scotland',       group:'C', date:'13/06', time:'22:00', venue:'Gillette Stadium · Boston',   oh:2.80, od:3.10, oa:2.50},
+  {home:'Scotland',    away:'Morocco',        group:'C', date:'19/06', time:'19:00', venue:'Gillette Stadium · Boston',   oh:2.60, od:3.20, oa:2.70},
+  {home:'Brazil',      away:'Haiti',          group:'C', date:'19/06', time:'21:30', venue:'Lincoln Financial · Philadelphia', oh:1.18, od:5.00, oa:12.0},
+  {home:'Scotland',    away:'Brazil',         group:'C', date:'24/06', time:'19:00', venue:'Hard Rock · Miami',          oh:5.00, od:3.80, oa:1.55},
+  {home:'Morocco',     away:'Haiti',          group:'C', date:'24/06', time:'19:00', venue:'Mercedes-Benz · Atlanta',    oh:1.45, od:4.00, oa:7.00},
+  // GRUPO D
+  {home:'USA',         away:'Paraguay',       group:'D', date:'12/06', time:'22:00', venue:'SoFi Stadium · Los Angeles',  oh:1.60, od:3.70, oa:5.00},
+  {home:'Australia',   away:'Turkey',         group:'D', date:'13/06', time:'01:00', venue:'BC Place · Vancouver',        oh:2.30, od:3.20, oa:3.10},
+  {home:'Turkey',      away:'Paraguay',       group:'D', date:'19/06', time:'01:00', venue:'Levi\'s Stadium · SF',        oh:2.00, od:3.30, oa:3.60},
+  {home:'USA',         away:'Australia',      group:'D', date:'19/06', time:'16:00', venue:'Lumen Field · Seattle',       oh:1.65, od:3.60, oa:5.00},
+  {home:'Turkey',      away:'USA',            group:'D', date:'25/06', time:'23:00', venue:'SoFi Stadium · Los Angeles',  oh:3.20, od:3.20, oa:2.10},
+  {home:'Paraguay',    away:'Australia',      group:'D', date:'25/06', time:'23:00', venue:'Levi\'s Stadium · SF',        oh:2.20, od:3.20, oa:3.20},
+  // GRUPO E
+  {home:'Germany',     away:'Curacao',        group:'E', date:'14/06', time:'14:00', venue:'NRG Stadium · Houston',       oh:1.15, od:5.50, oa:15.0},
+  {home:'Ivory Coast', away:'Ecuador',        group:'E', date:'14/06', time:'20:00', venue:'Lincoln Financial · Philadelphia', oh:2.10, od:3.20, oa:3.50},
+  {home:'Germany',     away:'Ivory Coast',    group:'E', date:'20/06', time:'17:00', venue:'BMO Field · Toronto',         oh:1.55, od:3.80, oa:5.50},
+  {home:'Ecuador',     away:'Curacao',        group:'E', date:'20/06', time:'21:00', venue:'Arrowhead · Kansas City',     oh:1.40, od:4.20, oa:8.00},
+  {home:'Ecuador',     away:'Germany',        group:'E', date:'25/06', time:'17:00', venue:'MetLife · Nova York/NJ',      oh:4.50, od:3.50, oa:1.70},
+  {home:'Curacao',     away:'Ivory Coast',    group:'E', date:'25/06', time:'17:00', venue:'Lincoln Financial · Philadelphia', oh:4.00, od:3.30, oa:1.85},
+  // GRUPO F
+  {home:'Netherlands', away:'Japan',          group:'F', date:'14/06', time:'17:00', venue:'AT&T Stadium · Dallas',       oh:1.75, od:3.50, oa:4.50},
+  {home:'Sweden',      away:'Tunisia',        group:'F', date:'14/06', time:'23:00', venue:'Estadio BBVA · Monterrey',    oh:1.80, od:3.40, oa:4.20},
+  {home:'Netherlands', away:'Sweden',         group:'F', date:'20/06', time:'14:00', venue:'NRG Stadium · Houston',       oh:1.70, od:3.50, oa:4.80},
+  {home:'Tunisia',     away:'Japan',          group:'F', date:'20/06', time:'01:00', venue:'Estadio BBVA · Monterrey',    oh:2.40, od:3.20, oa:2.90},
+  {home:'Japan',       away:'Sweden',         group:'F', date:'25/06', time:'20:00', venue:'AT&T Stadium · Dallas',       oh:2.60, od:3.20, oa:2.70},
+  {home:'Tunisia',     away:'Netherlands',    group:'F', date:'25/06', time:'20:00', venue:'Arrowhead · Kansas City',     oh:4.20, od:3.30, oa:1.80},
+  // GRUPO G
+  {home:'Belgium',     away:'Egypt',          group:'G', date:'15/06', time:'16:00', venue:'Lumen Field · Seattle',       oh:1.60, od:3.80, oa:5.50},
+  {home:'Iran',        away:'New Zealand',    group:'G', date:'15/06', time:'22:00', venue:'SoFi Stadium · Los Angeles',  oh:1.80, od:3.50, oa:4.50},
+  {home:'Belgium',     away:'Iran',           group:'G', date:'21/06', time:'16:00', venue:'SoFi Stadium · Los Angeles',  oh:1.55, od:3.80, oa:5.50},
+  {home:'New Zealand', away:'Egypt',          group:'G', date:'21/06', time:'22:00', venue:'BC Place · Vancouver',        oh:2.80, od:3.20, oa:2.50},
+  {home:'New Zealand', away:'Belgium',        group:'G', date:'27/06', time:'00:00', venue:'BC Place · Vancouver',        oh:5.50, od:3.80, oa:1.55},
+  {home:'Egypt',       away:'Iran',           group:'G', date:'27/06', time:'00:00', venue:'Lumen Field · Seattle',       oh:2.20, od:3.20, oa:3.20},
+  // GRUPO H
+  {home:'Spain',       away:'Cape Verde',     group:'H', date:'15/06', time:'13:00', venue:'Mercedes-Benz · Atlanta',     oh:1.30, od:4.50, oa:9.00},
+  {home:'Saudi Arabia',away:'Uruguay',        group:'H', date:'15/06', time:'19:00', venue:'Hard Rock · Miami',           oh:3.00, od:3.10, oa:2.30},
+  {home:'Spain',       away:'Saudi Arabia',   group:'H', date:'21/06', time:'13:00', venue:'Mercedes-Benz · Atlanta',     oh:1.45, od:4.00, oa:7.00},
+  {home:'Uruguay',     away:'Cape Verde',     group:'H', date:'21/06', time:'19:00', venue:'Hard Rock · Miami',           oh:1.50, od:4.00, oa:7.00},
+  {home:'Uruguay',     away:'Spain',          group:'H', date:'26/06', time:'21:00', venue:'Estadio Akron · Guadalajara', oh:3.80, od:3.20, oa:1.90},
+  {home:'Cape Verde',  away:'Saudi Arabia',   group:'H', date:'26/06', time:'21:00', venue:'NRG Stadium · Houston',       oh:2.50, od:3.20, oa:2.80},
+  // GRUPO I
+  {home:'France',      away:'Senegal',        group:'I', date:'16/06', time:'16:00', venue:'MetLife · Nova York/NJ',      oh:1.55, od:3.80, oa:5.50},
+  {home:'Iraq',        away:'Norway',         group:'I', date:'16/06', time:'19:00', venue:'Gillette Stadium · Boston',   oh:3.20, od:3.10, oa:2.20},
+  {home:'France',      away:'Iraq',           group:'I', date:'22/06', time:'18:00', venue:'Lincoln Financial · Philadelphia', oh:1.25, od:5.00, oa:10.0},
+  {home:'Norway',      away:'Senegal',        group:'I', date:'22/06', time:'21:00', venue:'MetLife · Nova York/NJ',      oh:2.00, od:3.30, oa:3.60},
+  {home:'Norway',      away:'France',         group:'I', date:'26/06', time:'16:00', venue:'Gillette Stadium · Boston',   oh:3.80, od:3.20, oa:1.90},
+  {home:'Senegal',     away:'Iraq',           group:'I', date:'26/06', time:'16:00', venue:'BMO Field · Toronto',         oh:1.70, od:3.50, oa:4.80},
+  // GRUPO J
+  {home:'Argentina',   away:'Algeria',        group:'J', date:'16/06', time:'22:00', venue:'Arrowhead · Kansas City',     oh:1.40, od:4.20, oa:8.00},
+  {home:'Austria',     away:'Jordan',         group:'J', date:'16/06', time:'01:00', venue:'Levi\'s Stadium · SF',        oh:1.75, od:3.50, oa:4.50},
+  {home:'Argentina',   away:'Austria',        group:'J', date:'22/06', time:'14:00', venue:'AT&T Stadium · Dallas',       oh:1.50, od:3.90, oa:6.00},
+  {home:'Jordan',      away:'Algeria',        group:'J', date:'22/06', time:'00:00', venue:'Levi\'s Stadium · SF',        oh:2.60, od:3.20, oa:2.70},
+  {home:'Jordan',      away:'Argentina',      group:'J', date:'27/06', time:'23:00', venue:'AT&T Stadium · Dallas',       oh:7.00, od:4.00, oa:1.38},
+  {home:'Algeria',     away:'Austria',        group:'J', date:'27/06', time:'23:00', venue:'Arrowhead · Kansas City',     oh:2.40, od:3.20, oa:2.90},
+  // GRUPO K
+  {home:'Portugal',    away:'Congo DR',       group:'K', date:'17/06', time:'14:00', venue:'NRG Stadium · Houston',       oh:1.30, od:4.50, oa:9.00},
+  {home:'Uzbekistan',  away:'Colombia',       group:'K', date:'17/06', time:'23:00', venue:'Azteca · Cidade do México',   oh:3.80, od:3.10, oa:1.90},
+  {home:'Portugal',    away:'Uzbekistan',     group:'K', date:'23/06', time:'14:00', venue:'NRG Stadium · Houston',       oh:1.25, od:5.00, oa:10.0},
+  {home:'Colombia',    away:'Congo DR',       group:'K', date:'23/06', time:'23:00', venue:'Estadio Akron · Guadalajara', oh:1.65, od:3.60, oa:5.00},
+  {home:'Colombia',    away:'Portugal',       group:'K', date:'27/06', time:'20:30', venue:'Hard Rock · Miami',           oh:3.80, od:3.20, oa:1.90},
+  {home:'Congo DR',    away:'Uzbekistan',     group:'K', date:'27/06', time:'20:30', venue:'Mercedes-Benz · Atlanta',    oh:1.90, od:3.40, oa:3.80},
+  // GRUPO L
+  {home:'England',     away:'Croatia',        group:'L', date:'17/06', time:'17:00', venue:'AT&T Stadium · Dallas',       oh:1.65, od:3.60, oa:5.00},
+  {home:'Ghana',       away:'Panama',         group:'L', date:'17/06', time:'20:00', venue:'BMO Field · Toronto',         oh:1.90, od:3.40, oa:3.80},
+  {home:'England',     away:'Ghana',          group:'L', date:'23/06', time:'17:00', venue:'Gillette Stadium · Boston',   oh:1.40, od:4.20, oa:8.00},
+  {home:'Panama',      away:'Croatia',        group:'L', date:'23/06', time:'20:00', venue:'BMO Field · Toronto',         oh:2.80, od:3.10, oa:2.50},
+  {home:'Panama',      away:'England',        group:'L', date:'27/06', time:'18:00', venue:'MetLife · Nova York/NJ',      oh:7.00, od:4.00, oa:1.38},
+  {home:'Croatia',     away:'Ghana',          group:'L', date:'27/06', time:'18:00', venue:'Lincoln Financial · Philadelphia', oh:1.80, od:3.40, oa:4.20},
+];
+
+const FLAG = (code, size='w80') => `https://flagcdn.com/${size}/${code}.png`;
+const FLAG_CODES = {
+  'Brazil':'br','Mexico':'mx','Argentina':'ar','Germany':'de','England':'gb-eng',
+  'Portugal':'pt','France':'fr','Spain':'es','Netherlands':'nl','Belgium':'be',
+  'Croatia':'hr','Uruguay':'uy','Colombia':'co','Japan':'jp','Morocco':'ma',
+  'USA':'us','South Korea':'kr','Serbia':'rs','Denmark':'dk','Switzerland':'ch',
+  'South Africa':'za','Qatar':'qa','Canada':'ca','Bosnia':'ba','Australia':'au',
+  'Turkey':'tr','Haiti':'ht','Scotland':'gb-sct','Ivory Coast':'ci','Ecuador':'ec',
+  'Curacao':'cw','Sweden':'se','Tunisia':'tn','Egypt':'eg','Iran':'ir',
+  'New Zealand':'nz','Saudi Arabia':'sa','Cape Verde':'cv','Senegal':'sn',
+  'Iraq':'iq','Norway':'no','Algeria':'dz','Austria':'at','Jordan':'jo',
+  'Congo DR':'cd','Uzbekistan':'uz','Ghana':'gh','Panama':'pa','Czech Republic':'cz',
+  'Paraguay':'py','Algeria':'dz','Norway':'no',
+};
+
+const picks = [];
+let predictionsCache = {};
+
+// ── API STATUS ───────────────────────────────────────────────────────────────
+async function checkAPIStatus() {
+  try {
+    const r = await fetch(`${API}/`, {signal: AbortSignal.timeout(3000)});
+    if (r.ok) {
+      document.getElementById('api-dot').classList.remove('offline');
+      document.getElementById('api-status-text').textContent = 'IA conectada · ' + API.replace('http://', '').replace('https://', '');
+      return true;
+    }
+  } catch(e) {}
+  document.getElementById('api-dot').classList.add('offline');
+  document.getElementById('api-status-text').textContent = 'API offline — verifique o servidor';
+  return false;
+}
+
+// ── BUSCAR PREDIÇÃO DA API ───────────────────────────────────────────────────
+async function getPrediction(home, away, oh, od, oa) {
+  const key = `${home}_${away}`;
+  if (predictionsCache[key]) return predictionsCache[key];
+  try {
+    const url = `${API}/predict?home=${encodeURIComponent(home)}&away=${encodeURIComponent(away)}&odds_home=${oh}&odds_draw=${od}&odds_away=${oa}`;
+    const r = await fetch(url, {signal: AbortSignal.timeout(8000)});
+    if (!r.ok) throw new Error('API error');
+    const data = await r.json();
+    predictionsCache[key] = data;
+    return data;
+  } catch(e) {
+    return null;
+  }
+}
+
+// ── RENDER MATCH CARD ────────────────────────────────────────────────────────
+function renderMatchCard(m, pred, idx) {
+  const hFlag = FLAG_CODES[m.home] || 'un';
+  const aFlag = FLAG_CODES[m.away] || 'un';
+  const hFlagUrl = FLAG(hFlag);
+  const aFlagUrl = FLAG(aFlag);
+  const hFlagSm  = FLAG(hFlag, 'w40');
+  const aFlagSm  = FLAG(aFlag, 'w40');
+
+  const hw = pred ? pred.home_win_prob : '–';
+  const dw = pred ? pred.draw_prob : '–';
+  const aw = pred ? pred.away_win_prob : '–';
+  const conf = pred ? pred.confidence : '–';
+  const top = pred ? pred.top_scores : [];
+  const sug = pred && pred.suggested_score ? `${tName(m.home)} ${pred.suggested_score.home} × ${pred.suggested_score.away}` : (top[0] ? `${tName(m.home)} ${top[0].home} × ${top[0].away}` : '–');
+  const liveData = getMatchStatus(m.home, m.away);
+  const isLive = !!(liveData && liveData.status === 'LIVE');
+  const isFinished = !!(liveData && liveData.status === 'FINISHED');
+  
+  const scoreH = pred && pred.suggested_score ? pred.suggested_score.home : (top[0] ? top[0].home : 0);
+  const scoreA = pred && pred.suggested_score ? pred.suggested_score.away : (top[0] ? top[0].away : 0);
+  
+  const rH = (liveData && liveData.homeScore !== null) ? liveData.homeScore : scoreH;
+  const rA = (liveData && liveData.awayScore !== null) ? liveData.awayScore : scoreA;
+
+  const top3HTML = top.length ? `
+    <div class="top3-section">
+      <div class="top3-title">3 placares mais prováveis</div>
+      <div class="top3-list">
+        ${top.slice(0, 3).map((s,i) => `
+          <div class="top3-item" style="display:flex; align-items:center; gap:8px; margin-bottom:8px;">
+            <div class="top3-rank-score" style="font-weight:bold; font-size:13px; color:var(--text); width:70px;">
+              <span style="color:var(--gold); margin-right:4px;">${i+1}º</span>${s.score}
+            </div>
+            <div class="top3-bar-track" style="flex:1; background:rgba(255,255,255,0.05); height:6px; border-radius:3px; overflow:hidden;">
+              <div class="top3-bar-fill" style="width:${s.probability}%; background:var(--gold); height:100%;"></div>
+            </div>
+            <div class="top3-pct" style="font-size:11px; color:var(--text2); width:35px; text-align:right;">${s.probability}%</div>
+          </div>`).join('')}
+      </div>
+    </div>` : `<div style="padding:14px 20px;font-size:12px;color:var(--text3)">⚠️ Predição indisponível — verifique a API</div>`;
+
+  const newsH = pred && pred.news && Array.isArray(pred.news.home) ? pred.news.home.map(n => `
+    <div style="padding:6px 0; border-bottom:1px solid rgba(255,255,255,0.05); font-size:11px; color:var(--text2)">
+      <span style="color:${n.type==='warning'?'var(--red)':'#4caf50'}; margin-right:4px">${n.type==='warning'?'⚠️':'✅'}</span>
+      ${n.title}
+    </div>
+  `).join('') : '<div style="font-size:11px;color:var(--text2)">Sem notícias recentes</div>';
+
+  const newsA = pred && pred.news && Array.isArray(pred.news.away) ? pred.news.away.map(n => `
+    <div style="padding:6px 0; border-bottom:1px solid rgba(255,255,255,0.05); font-size:11px; color:var(--text2)">
+      <span style="color:${n.type==='warning'?'var(--red)':'#4caf50'}; margin-right:4px">${n.type==='warning'?'⚠️':'✅'}</span>
+      ${n.title}
+    </div>
+  `).join('') : '<div style="font-size:11px;color:var(--text2)">Sem notícias recentes</div>';
+
+  const resultsH = pred && pred.last_results && Array.isArray(pred.last_results.home) ? pred.last_results.home.map(r => `
+    <div style="display:flex; align-items:center; gap:6px; margin-bottom:4px; font-size:11px">
+      <span style="display:inline-flex; align-items:center; justify-content:center; width:18px; height:18px; border-radius:3px; font-weight:bold; font-size:9px; background:${r.status==='V'?'#4caf50':r.status==='E'?'var(--gold)':'var(--red)'}; color:#000">${r.status}</span>
+      <span style="color:var(--text)">${r.score}</span>
+      <span style="color:var(--text2)">vs ${tName(r.opponent)} (${r.where==='Home'?'C':'F'})</span>
+    </div>
+  `).join('') : '<div style="font-size:11px;color:var(--text2)">Sem histórico registrado</div>';
+
+  const resultsA = pred && pred.last_results && Array.isArray(pred.last_results.away) ? pred.last_results.away.map(r => `
+    <div style="display:flex; align-items:center; gap:6px; margin-bottom:4px; font-size:11px">
+      <span style="display:inline-flex; align-items:center; justify-content:center; width:18px; height:18px; border-radius:3px; font-weight:bold; font-size:9px; background:${r.status==='V'?'#4caf50':r.status==='E'?'var(--gold)':'var(--red)'}; color:#000">${r.status}</span>
+      <span style="color:var(--text)">${r.score}</span>
+      <span style="color:var(--text2)">vs ${tName(r.opponent)} (${r.where==='Home'?'C':'F'})</span>
+    </div>
+  `).join('') : '<div style="font-size:11px;color:var(--text2)">Sem histórico registrado</div>';
+
+  const matchSummaryText = pred && pred.summary ? pred.summary : `IA prevê ${conf}% de confiança para este palpite. A simulação Dixon-Coles aponta equilíbrio estatístico com leve vantagem técnica.`;
+
+  return `
+  <div class="match-card ${pred?'':'dimmed'}" id="mc${idx}" ontouchend="toggleCard('mc${idx}');event.preventDefault()" onclick="toggleCard('mc${idx}')">
+    <div class="card-top-strip"></div>
+    <div class="card-inner">
+      <div class="match-meta-row">
+        <span class="match-group-lbl">Copa 2026 · Grupo ${m.group}</span>
+        ${isLive ? '<span class="live-badge"><div class="live-dot"></div> AO VIVO</span>' : isFinished ? '<span class="finished-badge">✓ Encerrado</span>' : `<span class="match-time-pill">${m.date||""} ${m.time}</span>`}
+      </div>
+      <div class="match-venue">🏟️ ${m.venue}</div>
+      <div class="teams-section">
+        <div class="team-col">
+          <img class="team-flag-big" src="${hFlagUrl}" alt="${tName(m.home)}" onerror="this.style.display='none'">
+          <div class="team-name-big">${tName(m.home)}</div>
+          <div class="team-rank-lbl">Copa 2026</div>
+        </div>
+        <div class="ai-score-center">
+          <div class="score-display">
+            <div class="score-digit ${isLive?'live':isFinished?'final':''}">${rH}</div>
+            <div class="score-colon">:</div>
+            <div class="score-digit ${isLive?'live':isFinished?'final':''}">${rA}</div>
+          </div>
+          <div class="ai-score-label">${isLive?'<span class="live-badge"><div class="live-dot"></div>AO VIVO</span>':isFinished?'<span class="finished-badge">✓ Resultado final</span>':'<span><div class="ai-pulse" style="display:inline-block"></div> Palpite IA</span>'}</div>
+        </div>
+        <div class="team-col">
+          <img class="team-flag-big" src="${aFlagUrl}" alt="${tName(m.away)}" onerror="this.style.display='none'">
+          <div class="team-name-big">${tName(m.away)}</div>
+          <div class="team-rank-lbl">Copa 2026</div>
+        </div>
+      </div>
+      <div class="prob-bar-section">
+        <div class="prob-bar-track">
+          <div class="pseg w" style="width:${hw}%"></div>
+          <div class="pseg d" style="width:${dw}%"></div>
+          <div class="pseg l" style="width:${aw}%"></div>
+        </div>
+        <div class="prob-labels-row">
+          <div class="prob-lbl-item"><div class="plbl-pct w">${hw}%</div><div class="plbl-name">${tName(m.home)}</div></div>
+          <div class="prob-lbl-item"><div class="plbl-pct d">${dw}%</div><div class="plbl-name">Empate</div></div>
+          <div class="prob-lbl-item"><div class="plbl-pct l">${aw}%</div><div class="plbl-name">${tName(m.away)}</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="conf-strip">
+      <span class="conf-label">🤖 Confiança do modelo</span>
+      <span class="conf-val">${conf}%</span>
+    </div>
+    ${top3HTML}
+    
+    ${(function() {
+      if (isFinished) {
+        return `
+        <div class="my-pick-section">
+          <div class="my-pick-box" style="border: 1px solid rgba(255,255,255,0.05); background: rgba(0,0,0,0.15)">
+            <div class="pick-box-title" style="color:var(--text3)">Resumo do Bolão</div>
+            <div style="font-size:11px; margin: 8px 0; color:var(--text2)">
+              💡 IA sugeriu: <strong style="color:var(--gold)">${sug.split('sugere:')[1] || sug}</strong>
+            </div>
+            <div style="font-size:11px; margin-top:10px" class='result-box'><span>📊</span><span class='result-box-text'>Resultado final: ${rH} × ${rA}</span></div>
+          </div>
+        </div>`;
+      } else {
+        return `
+        <div class="my-pick-section">
+          <div class="my-pick-box" style="border:1px solid var(--border2); padding:12px; border-radius:8px; background:rgba(0,0,0,0.2)">
+            <div class="pick-box-title" style="font-size:11px; font-weight:bold; color:var(--text2)">Sugestão de Palpite do Bolão</div>
+            <div class="ai-hint" style="margin: 8px 0 4px 0;"><span style="font-size:14px">💡</span><span class="ai-hint-text">IA sugere:</span><span class="ai-hint-score" style="color:var(--gold); font-weight:bold; margin-left:6px">${sug}</span></div>
+            <div style="font-size:9.5px; color:var(--text2); line-height:1.35; margin-bottom:0;">
+              * A <strong>Sugestão</strong> equilibra probabilidade com o estilo tático esperado (ex: jogo aberto), enquanto a lista de <strong>Placares Mais Prováveis</strong> reflete a probabilidade matemática bruta pura.
+            </div>
+          </div>
+        </div>`;
+      }
+    })()}
+
+    <div class="expand-area" id="ex-mc${idx}">
+      <div class="divider"></div>
+      <div class="expand-inner">
+        <!-- Enrichment: Last 3 Results -->
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:12px;">
+          <div>
+            <div style="font-size:9px; text-transform:uppercase; color:var(--gold); font-weight:bold; margin-bottom:4px">Últimos Resultados (${tName(m.home)})</div>
+            ${resultsH}
+          </div>
+          <div>
+            <div style="font-size:9px; text-transform:uppercase; color:var(--gold); font-weight:bold; margin-bottom:4px">Últimos Resultados (${tName(m.away)})</div>
+            ${resultsA}
+          </div>
+        </div>
+
+        <!-- Enrichment: Medical Alerts / News Feed -->
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:12px;">
+          <div>
+            <div style="font-size:9px; text-transform:uppercase; color:var(--gold); font-weight:bold; margin-bottom:4px">Notícias de Lesão (${tName(m.home)})</div>
+            ${newsH}
+          </div>
+          <div>
+            <div style="font-size:9px; text-transform:uppercase; color:var(--gold); font-weight:bold; margin-bottom:4px">Notícias de Lesão (${tName(m.away)})</div>
+            ${newsA}
+          </div>
+        </div>
+
+        <div class="ai-summary">
+          <div class="ai-summary-hdr">💡 Parecer Técnico do Robô</div>
+          <div class="ai-summary-body" style="font-size:11px; line-height:1.5">${matchSummaryText}</div>
+        </div>
+        <div class="section-mini" style="margin-top:10px">Sobre o modelo</div>
+        <div style="font-size:11px;color:var(--text2);line-height:1.6;padding:8px 0">
+          Predição gerada pelo modelo <strong style="color:var(--text)">Poisson Bivariado + Dixon-Coles</strong>, 
+          calibrado com odds de mercado (70% modelo + 30% mercado). 
+          A <strong>Sugestão do Bolão</strong> equilibra probabilidade com o estilo do jogo (Aberto/Truncado), 
+          enquanto a lista acima mostra a probabilidade matemática bruta de cada placar.
+        </div>
+      </div>
+    </div>
+    <div class="expand-toggle" id="tg-mc${idx}"><span>Ver detalhes do modelo</span><span class="t-arrow">▼</span></div>
+  </div>`;
+}// ── CARREGAR PARTIDAS ────────────────────────────────────────────────────────
+async function loadMatches() {
+  const container = document.getElementById('matches-container');
+  container.innerHTML = `<div class="loading-card"><div class="loading-spinner"></div><div class="loading-text">Calculando predições com IA...</div></div>`;
+
+  const apiOk = await checkAPIStatus();
+
+  if (!apiOk) {
+    document.getElementById('matches-container').innerHTML = `<div class="error-card">
+      <div class="error-icon">⚠️</div>
+      <div class="error-text">Backend offline.<br>Rode o servidor com:<br><code style="color:var(--accent);font-size:12px">python -m uvicorn app.main:app --port 8002</code></div>
+      <button class="btn-retry" onclick="loadMatches()">Tentar novamente</button>
+    </div>`;
+    return;
+  }
+
+  try {
+    await fetchLiveResults();
+    const r = await fetch(API + '/matches', {signal: AbortSignal.timeout(12000)});
+    if (!r.ok) throw new Error('API matches error');
+    const data = await r.json();
+    
+    allMatchesData = (data.matches || []).map((m, i) => {
+      const key = `${m.home}_${m.away}`;
+      predictionsCache[key] = m.prediction;
+      
+      const st = m.status || '';
+      if (['FINISHED','IN_PLAY','PAUSED'].includes(st)) {
+        liveResults[key] = {
+          homeScore: (m.score||{}).home ?? null,
+          awayScore: (m.score||{}).away ?? null,
+          status: (st==='IN_PLAY'||st==='PAUSED') ? 'LIVE' : 'FINISHED',
+        };
+      }
+      
+      return {
+        match: m,
+        html: renderMatchCard(m, m.prediction, i)
+      };
+    });
+    
+    renderFilteredMatches();
+    startAutoRefresh();
+    updateAIGamification(data.matches);
+    
+    const now = new Date();
+    const luel = document.getElementById('last-update');
+    if(luel) luel.textContent = 'Atualizado ' + now.getHours().toString().padStart(2,'0') + ':' + now.getMinutes().toString().padStart(2,'0');
+  } catch (err) {
+    console.error("Failed loading matches:", err);
+    document.getElementById('matches-container').innerHTML = `<div class="error-card">
+      <div class="error-icon">⚠️</div>
+      <div class="error-text">Erro ao conectar com a API.</div>
+      <button class="btn-retry" onclick="loadMatches()">Tentar novamente</button>
+    </div>`;
+  }
+}
+
+// ── CARREGAR RANKINGS ────────────────────────────────────────────────────────
+async function loadRankings() {
+  const container = document.getElementById('rankings-container');
+  container.innerHTML = `<div class="loading-card"><div class="loading-spinner"></div><div class="loading-text">Simulando 10.000 torneios...</div></div>`;
+  try {
+    const r = await fetch(`${API}/champion-odds`, {signal: AbortSignal.timeout(30000)});
+    const data = await r.json();
+    const posClass = ['g','s','b','','','','',''];
+    const details = {
+      'Brazil':'Elenco mais completo','France':'Mbappé em alta','Argentina':'Campeã 2022',
+      'England':'Kane + Bellingham','Germany':'Geração renovada','Spain':'Tiki-taka moderno',
+      'Portugal':'Jovens talentosos','Netherlands':'Sólido coletivo',
+    };
+    container.innerHTML = data.rankings.slice(0,8).map((t,i) => {
+      const code = FLAG_CODES[t.team] || 'un';
+      const maxProb = data.rankings[0].probability;
+      return `<div class="champion-card">
+        <div class="rank-pos ${posClass[i]||''}">#${t.rank}</div>
+        <img class="champ-flag-img" src="${FLAG(code)}" alt="${tName(t.team)}">
+        <div class="champ-info"><div class="champ-name">${tName(t.team)}</div><div class="champ-detail">${details[t.team]||'Seleção competitiva'}</div></div>
+        <div class="champ-right">
+          <div class="champ-prob">${t.probability}%</div>
+          <div class="champ-bar"><div class="champ-fill" style="width:${Math.round(t.probability/maxProb*100)}%"></div></div>
+        </div>
+      </div>`;
+    }).join('');
+  } catch(e) {
+    container.innerHTML = `<div class="error-card"><div class="error-icon">⚠️</div><div class="error-text">Não foi possível carregar rankings.<br>API offline?</div><button class="btn-retry" onclick="loadRankings()">Tentar novamente</button></div>`;
+  }
+}
+
+// ── CARREGAR STATS ───────────────────────────────────────────────────────────
+function loadStats() {
+  const container = document.getElementById('stats-container');
+  
+  // If ratingsCache hasn't loaded yet, try to load it or show loading
+  if (!ratingsCache || Object.keys(ratingsCache).length === 0) {
+    container.innerHTML = `<div class="loading-card"><div class="loading-spinner"></div><div class="loading-text">Carregando dados da API...</div></div>`;
+    // Try to fetch ratings
+    fetch(API + '/team-ratings')
+      .then(r => r.json())
+      .then(data => {
+        ratingsCache = data.ratings || {};
+        loadStats(); // recurse once loaded
+      })
+      .catch(() => {
+        container.innerHTML = `<div class="error-card"><div class="error-icon">⚠️</div><div class="error-text">Erro ao conectar com o backend.</div></div>`;
+      });
+    return;
+  }
+
+  // Construct teams array dynamically from all 48 ratingsCache teams
+  const teams = Object.keys(ratingsCache).map(tNameKey => {
+    const r = ratingsCache[tNameKey];
+    
+    // Normalize statistics based on att, def and fifa points
+    const atk = Math.min(100, Math.max(40, Math.round((r.att / 2.0) * 100)));
+    // def coefficient: lower is better (usually between 0.5 and 1.8)
+    const defScore = Math.min(100, Math.max(40, Math.round(((2.0 - r.def) / 1.5) * 100)));
+    const form = Math.min(100, Math.max(40, Math.round((r.fifa / 1850) * 100)));
+    const squad = Math.min(100, Math.max(40, Math.round(((atk + defScore) / 2) + 2)));
+    
+    // Determine last 5 matches mock pattern based on fifa rank
+    let rec = '3V 1E 1D';
+    if (r.fifa > 1700) rec = '5V 0E 0D';
+    else if (r.fifa > 1600) rec = '4V 0E 1D';
+    else if (r.fifa < 1400) rec = '1V 2E 2D';
+
+    return {
+      name: tNameKey,
+      flag: FLAG_CODES[tNameKey] || 'un',
+      rec: rec,
+      atk: atk,
+      def: defScore,
+      form: form,
+      squad: squad
+    };
+  });
+
+  // Sort alphabetically by Portuguese name
+  teams.sort((a, b) => tName(a.name).localeCompare(tName(b.name)));
+
+  window.statsTeamsData = teams;
+  renderStatsList(teams);
+}
+
+function renderStatsList(teams) {
+  const container = document.getElementById('stats-container');
+  if (teams.length === 0) {
+    container.innerHTML = `<div style="padding: 24px; text-align: center; color: var(--text3); font-size: 13px;">Nenhuma seleção encontrada com esse nome.</div>`;
+    return;
+  }
+  
+  container.innerHTML = teams.map(t => `
+    <div class="team-stat-card">
+      <div class="ts-header">
+        <img class="ts-flag-img" src="${FLAG(t.flag)}" alt="${tName(t.name)}">
+        <div><div class="ts-name">${tName(t.name)}</div><div class="ts-sub">${t.rec} · últimas 5 partidas</div></div>
+      </div>
+      <div class="mini-bars">
+        <div class="mini-bar-row"><span class="mini-bar-lbl">Ataque</span><div class="mini-bar-track"><div class="mini-bar-fill" style="width:${t.atk}%;background:var(--accent)"></div></div><span class="mini-bar-val">${t.atk}</span></div>
+        <div class="mini-bar-row"><span class="mini-bar-lbl">Defesa</span><div class="mini-bar-track"><div class="mini-bar-fill" style="width:${t.def}%;background:var(--blue)"></div></div><span class="mini-bar-val">${t.def}</span></div>
+        <div class="mini-bar-row"><span class="mini-bar-lbl">Forma recente</span><div class="mini-bar-track"><div class="mini-bar-fill" style="width:${t.form}%;background:var(--gold)"></div></div><span class="mini-bar-val">${t.form}</span></div>
+        <div class="mini-bar-row"><span class="mini-bar-lbl">Força do elenco</span><div class="mini-bar-track"><div class="mini-bar-fill" style="width:${t.squad}%;background:var(--purple)"></div></div><span class="mini-bar-val">${t.squad}</span></div>
+      </div>
+    </div>`).join('');
+}
+
+function filterStats() {
+  const query = document.getElementById('stats-search').value.toLowerCase().trim();
+  const teams = window.statsTeamsData || [];
+  
+  if (!query) {
+    renderStatsList(teams);
+    return;
+  }
+  
+  const filtered = teams.filter(t => {
+    const ptName = tName(t.name).toLowerCase();
+    const enName = t.name.toLowerCase();
+    return ptName.includes(query) || enName.includes(query);
+  });
+  
+  renderStatsList(filtered);
+}
+
+// ── NAVEGAÇÃO ────────────────────────────────────────────────────────────────
+function showPage(id, tabEl, bnId) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  if (tabEl) { document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active')); tabEl.classList.add('active'); }
+  if (bnId) {
+    document.querySelectorAll('.bn-item').forEach(b => b.classList.remove('active'));
+    document.getElementById(bnId).classList.add('active');
+    const map = {matches:0,rankings:1,stats:2};
+    const tabs = document.querySelectorAll('.nav-tab');
+    tabs.forEach(t => t.classList.remove('active'));
+    if (map[id]!==undefined) tabs[map[id]].classList.add('active');
+  }
+  if (id==='rankings') loadRankings();
+  if (id==='stats') loadStats();
+  if (id==='profile') renderPicks();
+  document.querySelector('.scroll-content').scrollTop = 0;
+}
+
+function toggleCard(id) {
+  const card = document.getElementById(id);
+  const ex = document.getElementById('ex-'+id);
+  const tg = document.getElementById('tg-'+id);
+  if (!card||!ex||!tg) return;
+  ex.classList.toggle('open');
+  tg.classList.toggle('open');
+  card.classList.toggle('expanded');
+}
+
+let currentFilter = 'all';
+let allMatchesData = [];
+
+function filterMatches(group, el) {
+  currentFilter = group;
+  document.querySelectorAll('.day-chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  renderFilteredMatches();
+}
+
+function renderFilteredMatches() {
+  const container = document.getElementById('matches-container');
+  
+  const getRound = (m) => {
+    const r1Dates = ['11/06', '12/06', '13/06', '14/06', '15/06', '16/06', '17/06'];
+    const r2Dates = ['18/06', '19/06', '20/06', '21/06', '22/06', '23/06'];
+    if (r1Dates.includes(m.date)) return 1;
+    if (r2Dates.includes(m.date)) return 2;
+    return 3;
+  };
+
+  // Count finished games in each round
+  const r1Matches = allMatchesData.filter(m => getRound(m.match) === 1);
+  const r1Finished = r1Matches.filter(m => {
+    const status = getMatchStatus(m.match.home, m.match.away)?.status;
+    return status === 'FINISHED';
+  }).length;
+
+  const r2Matches = allMatchesData.filter(m => getRound(m.match) === 2);
+  const r2Finished = r2Matches.filter(m => {
+    const status = getMatchStatus(m.match.home, m.match.away)?.status;
+    return status === 'FINISHED';
+  }).length;
+
+  const pctR1 = Math.round((r1Finished / r1Matches.length) * 100);
+  const pctR2 = Math.round((r2Finished / r2Matches.length) * 100);
+
+  // Desbloqueia Rodada 2 quando pelo menos 18 partidas (75%) da Rodada 1 terminarem
+  const r2Unlocked = r1Finished >= 18;
+  // Desbloqueia Rodada 3 quando Rodada 2 estiver desbloqueada e pelo menos 18 partidas (75%) da Rodada 2 terminarem
+  const r3Unlocked = r2Unlocked && r2Finished >= 18;
+
+  // Atualizar painel de status
+  const statusText = document.getElementById('round-status-text');
+  const statusPct = document.getElementById('round-status-pct');
+  const statusBar = document.getElementById('round-status-bar');
+  const statusDesc = document.getElementById('round-status-desc');
+
+  if (statusText && statusPct && statusBar && statusDesc) {
+    if (!r2Unlocked) {
+      statusText.innerHTML = '⚽ Fase de Grupos · Rodada 1';
+      statusPct.innerHTML = `${pctR1}% Concluída`;
+      statusBar.style.width = `${pctR1}%`;
+      statusDesc.innerHTML = `Os palpites da <strong>Rodada 2</strong> serão liberados automaticamente quando 75% da Rodada 1 estiver concluída (Falta concluir ${18 - r1Finished} jogo(s)).`;
+    } else if (!r3Unlocked) {
+      statusText.innerHTML = '⚽ Fase de Grupos · Rodada 2';
+      statusPct.innerHTML = `${pctR2}% Concluída`;
+      statusBar.style.width = `${pctR2}%`;
+      statusDesc.innerHTML = `<strong>Rodada 2 Desbloqueada!</strong> Os palpites da <strong>Rodada 3</strong> serão liberados quando 75% da Rodada 2 estiver concluída (Falta concluir ${18 - r2Finished} jogo(s)).`;
+    } else {
+      statusText.innerHTML = '🏆 Fase de Grupos · Rodada 3';
+      statusPct.innerHTML = `100% Liberado`;
+      statusBar.style.width = `100%`;
+      statusDesc.innerHTML = `<strong>Todas as rodadas da fase de grupos estão liberadas!</strong> Aproveite e prepare seus palpites.`;
+    }
+  }
+
+  // Filtrar partidas com base no desbloqueio
+  const visibleMatches = allMatchesData.filter(m => {
+    const round = getRound(m.match);
+    if (round === 1) return true;
+    if (round === 2) return r2Unlocked;
+    if (round === 3) return r3Unlocked;
+    return false;
+  });
+
+  const filtered = currentFilter === 'all' 
+    ? visibleMatches 
+    : visibleMatches.filter(m => m.match.group === currentFilter);
+  
+  if (filtered.length === 0) {
+    container.innerHTML = '<div class="loading-card"><div class="loading-text">Nenhum jogo liberado neste grupo</div></div>';
+    return;
+  }
+  container.innerHTML = filtered.map(m => m.html).join('');
+}
+
+function savePick(e, hId, aId, hFlag, hName, aFlag, aName) {
+  e.stopPropagation();
+  const h = document.getElementById(hId).value;
+  const a = document.getElementById(aId).value;
+  const key = hName+' vs '+aName;
+  const idx = picks.findIndex(p => p.key===key);
+  const entry = {key,hFlag,hName,aFlag,aName,h,a};
+  if (idx>=0) picks[idx]=entry; else picks.push(entry);
+  document.getElementById('cnt-picks').textContent = picks.length;
+  showToast('✅ '+hName+' '+h+' × '+a+' '+aName+' salvo!');
+}
+
+function renderPicks() {
+  const empty = document.getElementById('picks-empty');
+  const cont = document.getElementById('picks-container');
+  cont.innerHTML = '';
+  if (!picks.length) { empty.style.display='block'; return; }
+  empty.style.display='none';
+  picks.forEach(p => {
+    const d = document.createElement('div');
+    d.className = 'pick-entry';
+    d.innerHTML = `
+      <div class="pick-match-info">
+        <div class="pick-match-flags"><img src="${p.hFlag}" style="width:22px;height:16px;object-fit:cover;border-radius:3px;vertical-align:middle"> <img src="${p.aFlag}" style="width:22px;height:16px;object-fit:cover;border-radius:3px;vertical-align:middle"></div>
+        <div class="pick-match-name">${p.hName} vs ${p.aName}</div>
+      </div>
+      <div class="pick-score-saved">${p.h} × ${p.a}</div>
+      <span class="pick-status wait">Aguard.</span>`;
+    cont.appendChild(d);
+  });
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2600);
+}
+
+function toggleNotif() { document.getElementById('notifPanel').classList.toggle('open'); }
+
+// Fix touch para mobile
+document.addEventListener('touchstart', function() {}, {passive: true});
+
+document.addEventListener('click', e => {
+  const p = document.getElementById('notifPanel');
+  if (p.classList.contains('open') && !p.contains(e.target) && !e.target.closest('.btn-notif')) p.classList.remove('open');
+});
+
+// ── INICIAR ──────────────────────────────────────────────────────────────────
+loadMatches();
+
+// ── SISTEMA DE ALERTAS ─────────────────────────────────────────────────
+const API_BASE = API;
+let _lastAlertId = 0;
+let _alertsOpen = false;
+
+async function fetchAlerts() {
+  try {
+    const r = await fetch(`${API_BASE}/alerts?limit=20`);
+    if (!r.ok) return;
+    const data = await r.json();
+    updateAlertUI(data);
+    checkNewAlerts(data.alerts);
+  } catch(e) {
+    // API offline - usar dados simulados locais
+    loadLocalAlerts();
+  }
+}
+
+function loadLocalAlerts() {
+  // Alertas de demo quando API está offline (free tier dorme)
+  const demos = [
+    {id: 1001, type: 'prediction_change', title: '🔄 Palpite mudou — Brasil x México',
+     body: 'Odds do mercado mudaram. IA recalculou: de 1×0 para 2×0 (probabilidade subiu 4,2%).',
+     match: 'Brasil x México', priority: 'high', read: false,
+     timestamp: new Date(Date.now()-5*60000).toISOString()},
+    {id: 1002, type: 'news', title: '🚑 Vinicius Jr. dúvida na estreia',
+     body: 'Atacante sentiu dores no tornozelo no treino. Avaliado nas próximas 24h.',
+     match: 'Brasil', priority: 'high', read: false,
+     timestamp: new Date(Date.now()-25*60000).toISOString()},
+    {id: 1003, type: 'odds_change', title: '📊 Odds alteradas — França x Espanha',
+     body: 'França ficou mais favorita nas casas de apostas. Palpite mantido: 1×1.',
+     match: 'França x Espanha', priority: 'medium', read: false,
+     timestamp: new Date(Date.now()-60*60000).toISOString()},
+  ];
+  updateAlertUI({alerts: demos, unread_count: demos.length});
+}
+
+function updateAlertUI(data) {
+  const count = data.unread_count || 0;
+  const badge = document.getElementById('alert-badge');
+  if (badge) {
+    badge.textContent = count > 9 ? '9+' : count;
+    badge.style.display = count > 0 ? 'flex' : 'none';
+  }
+
+  if (_alertsOpen) {
+    renderAlertsList(data.alerts || []);
+  }
+}
+
+function checkNewAlerts(alerts) {
+  if (!alerts || alerts.length === 0) return;
+  const newest = alerts[0];
+  if (_lastAlertId && newest.id !== _lastAlertId && !newest.read) {
+    showToast(newest.title, newest.body);
+  }
+  _lastAlertId = newest.id;
+}
+
+function renderAlertsList(alerts) {
+  const list = document.getElementById('alerts-list');
+  if (!list) return;
+
+  if (alerts.length === 0) {
+    list.innerHTML = '<div class="alerts-empty"><div class="icon">🔔</div><div>Nenhum alerta ainda</div></div>';
+    return;
+  }
+
+  list.innerHTML = alerts.map(a => {
+    const unread = !a.read ? 'unread' : '';
+    const priority = `priority-${a.priority || 'medium'}`;
+    const typeLabel = {news:'Notícia', odds_change:'Odds', prediction_change:'Palpite'}[a.type] || a.type;
+    const time = formatAlertTime(a.timestamp);
+    return `
+      <div class="alert-item ${unread} ${priority}" onclick="markAlertRead(${a.id}, this)">
+        <div class="alert-title">${a.title}</div>
+        <div class="alert-body">${a.body}</div>
+        <div class="alert-meta">
+          <span class="alert-type-badge ${a.type}">${typeLabel}</span>
+          <span>${time}</span>
+          ${a.match ? `<span>· ${a.match}</span>` : ''}
+        </div>
+      </div>`;
+  }).join('');
+}
+
+function formatAlertTime(iso) {
+  try {
+    const diff = (Date.now() - new Date(iso).getTime()) / 60000;
+    if (diff < 1) return 'agora';
+    if (diff < 60) return `${Math.round(diff)} min`;
+    if (diff < 1440) return `${Math.round(diff/60)}h`;
+    return `${Math.round(diff/1440)}d`;
+  } catch { return ''; }
+}
+
+async function markAlertRead(id, el) {
+  el.classList.remove('unread');
+  try {
+    await fetch(`${API_BASE}/alerts/${id}/read`, {method:'POST'});
+    await fetchAlerts();
+  } catch {}
+}
+
+function openAlerts() {
+  _alertsOpen = true;
+  document.getElementById('alerts-drawer').classList.add('open');
+  document.getElementById('alerts-overlay').classList.add('open');
+  // Renderizar alertas ao abrir
+  fetchAlerts();
+  loadLocalAlerts(); // garantir conteúdo mesmo sem API
+}
+
+function closeAlerts() {
+  _alertsOpen = false;
+  document.getElementById('alerts-drawer').classList.remove('open');
+  document.getElementById('alerts-overlay').classList.remove('open');
+}
+
+function showToast(title, body) {
+  const toast = document.getElementById('toast-notif');
+  document.getElementById('toast-title').textContent = title;
+  document.getElementById('toast-body').textContent = body;
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 4000);
+}
+
+// Polling automático a cada 5 minutos
+fetchAlerts();
+setInterval(fetchAlerts, 5 * 60 * 1000);
+// ── FIM SISTEMA DE ALERTAS ──────────────────────────────────────────────
+
+
+// ─── PREMIUM AND SIMULATOR INTERACTIVE UTILITIES ──────────────────────────────
+let activePlan = localStorage.getItem('userPlan') || 'Free';
+let simulatedMatches = {};
+
+// Safe no-op for renderVipPage to avoid reference errors
+function renderVipPage() {
+  console.log("renderVipPage executed (no-op).");
+}
+
+function updateVipTelegramButtonVisibility() {
+  const currentPlan = localStorage.getItem('userPlan') || 'Free';
+  const btn = document.getElementById('vip-telegram-btn');
+  const isVip = localStorage.getItem('hasOpportunitiesHub') === 'true' || 
+                 localStorage.getItem('hasTelegramVIP') === 'true' || 
+                 currentPlan === 'VIP';
+  
+  if (btn) {
+    if (isVip) {
+      // User has already unlocked VIP: redirect directly to Telegram group modal
+      btn.style.display = 'flex';
+      btn.innerHTML = '<span>✈️ Canal VIP</span>';
+      btn.onclick = () => {
+        document.getElementById('vip-welcome-modal').style.display = 'flex';
+      };
+      btn.style.background = 'linear-gradient(135deg, #229ED9, #1a7ab5)';
+      btn.style.color = '#fff';
+    } else if (currentPlan === 'Standard') {
+      btn.style.display = 'none'; // Hide checkout button from header once paid Standard (if no VIP)
+    } else {
+      // Free tier: Show button as upgrade option
+      btn.style.display = 'flex';
+      btn.innerHTML = '<span>✈️ VIP - Telegram</span>';
+      btn.onclick = () => handleSubscribe('Standard', 19.90);
+      btn.style.background = 'linear-gradient(135deg, #229ED9, #1a7ab5)';
+      btn.style.color = '#fff';
+    }
+  }
+}
+
+// Subscribe event handlers
+let selectedPlan = 'Standard';
+let basePlanPrice = 19.90;
+
+function handleSubscribe(planName, price) {
+  selectedPlan = planName;
+  basePlanPrice = price;
+  
+  // Reset checkout UI states
+  document.getElementById('telegram-upsell-checkbox').checked = false;
+  document.getElementById('telegram-success-link-container').style.display = 'none';
+  document.getElementById('simulate-payment-btn').style.display = 'block';
+  
+  document.getElementById('modal-plan-title').textContent = 'ASSINATURA ' + planName.toUpperCase();
+  
+  updateCheckoutPrice();
+  
+  document.getElementById('checkout-modal').style.display = 'flex';
+  document.getElementById('checkout-status').innerHTML = '<div class="loading-spinner" style="width:14px; height:14px; border-width:2px; margin:0;"></div> Aguardando confirmação do PIX...';
+  document.getElementById('checkout-status').style.color = 'var(--gold)';
+}
+
+function toggleOrderBumpCheckbox() {
+  const cb = document.getElementById('telegram-upsell-checkbox');
+  cb.checked = !cb.checked;
+  updateCheckoutPrice();
+}
+
+function updateCheckoutPrice() {
+  const isChecked = document.getElementById('telegram-upsell-checkbox').checked;
+  const planSuffix = isChecked ? ' + ALERTAS TELEGRAM' : '';
+  const finalPrice = isChecked ? (basePlanPrice + 9.90) : basePlanPrice;
+  
+  document.getElementById('modal-plan-title').textContent = 'ASSINATURA ' + selectedPlan.toUpperCase() + planSuffix;
+  document.getElementById('modal-plan-price').textContent = 'R$ ' + finalPrice.toFixed(2).replace('.', ',');
+  
+  // Dynamic key based on selection
+  const slug = (selectedPlan.toLowerCase() + (isChecked ? '-telegram' : ''))
+    .replace(' ', '')
+    .replace('ó', 'o')
+    .replace('á', 'a');
+    
+  document.getElementById('pix-key').textContent = 'golcerto2026.pix.' + slug + '.gateway.br/pay/' + Math.random().toString(36).substring(2, 12);
+}
+
+function closeCheckout() {
+  document.getElementById('checkout-modal').style.display = 'none';
+}
+
+function copyPixKey() {
+  const keyText = document.getElementById('pix-key').textContent;
+  navigator.clipboard.writeText(keyText).then(() => {
+    alert('Chave PIX copiada para a área de transferência!');
+  });
+}
+
+function simulatePayment() {
+  const statusEl = document.getElementById('checkout-status');
+  statusEl.innerHTML = '✅ Pagamento confirmado pelo banco!';
+  statusEl.style.color = '#4caf50';
+  
+  const hasTelegram = document.getElementById('telegram-upsell-checkbox').checked;
+  
+  // Hide simulator button after success to clean up UI
+  document.getElementById('simulate-payment-btn').style.display = 'none';
+  
+  setTimeout(() => {
+    if (hasTelegram) {
+      // Show VIP link for Telegram
+      document.getElementById('telegram-success-link-container').style.display = 'block';
+      statusEl.innerHTML = '🎉 Obrigado! Clique no botão abaixo para entrar no canal VIP de Sinais.';
+    } else {
+      document.getElementById('checkout-modal').style.display = 'none';
+    }
+    
+    if (selectedPlan.toLowerCase().includes('vip')) {
+      activePlan = 'VIP';
+      localStorage.setItem('userPlan', 'VIP');
+      if (hasTelegram) {
+        localStorage.setItem('hasTelegramVIP', 'true');
+      }
+      
+      // Update badge throughout UI
+      const proBadges = document.querySelectorAll('.badge-pro');
+      proBadges.forEach(b => {
+        b.textContent = 'GOLD VIP';
+        b.style.background = 'linear-gradient(135deg, var(--gold), #d4a017)';
+        b.style.color = '#000';
+      });
+      
+      // Update plan info text
+      const planSub = document.querySelector('.rank-hero-sub');
+      if (planSub) {
+        planSub.innerHTML = '👑 <strong>Seu Plano VIP Gold está Ativo!</strong> Aproveite todas as ferramentas de inteligência analítica.';
+        planSub.style.color = 'var(--gold)';
+      }
+      
+      renderVipPage();
+      updateVipTelegramButtonVisibility();
+      if (!hasTelegram) {
+        alert('Sua assinatura VIP Gold foi ativada com sucesso! Todos os recursos avançados estão disponíveis.');
+      }
+    } else {
+      activePlan = 'Standard';
+      localStorage.setItem('userPlan', 'Standard');
+      if (hasTelegram) {
+        localStorage.setItem('hasTelegramVIP', 'true');
+      }
+      
+      // Update badge throughout UI
+      const proBadges = document.querySelectorAll('.badge-pro');
+      proBadges.forEach(b => {
+        b.textContent = 'STANDARD';
+        b.style.background = '#c5a85c';
+        b.style.color = '#000';
+      });
+      
+      // Update plan info text
+      const planSub = document.querySelector('.rank-hero-sub');
+      if (planSub) {
+        planSub.innerHTML = '⭐ <strong>Seu Plano Standard está Ativo!</strong> Faça o upgrade para o VIP Gold a qualquer momento.';
+        planSub.style.color = '#c5a85c';
+      }
+      
+      renderVipPage();
+      updateVipTelegramButtonVisibility();
+      if (!hasTelegram) {
+        alert('Sua assinatura Standard foi ativada com sucesso! Previsões básicas ativadas.');
+      }
+    }
+  }, 1200);
+}
+
+// Demo Simulation Panel markup & handlers
+const demoPanelHtml = `
+<div id="demo-sim-panel" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); backdrop-filter:blur(6px); z-index:9998; align-items:center; justify-content:center;">
+  <div style="background:#0d0d0d; border: 1px solid var(--gold); border-radius: 16px; padding: 24px; width: 90%; max-width: 380px; box-shadow:0 10px 30px rgba(0,0,0,0.5); text-align:center; position:relative;">
+    <button onclick="toggleSimPanel(event)" style="position:absolute; top:12px; right:12px; background:none; border:none; color:var(--text3); font-size:18px; cursor:pointer;">&times;</button>
+    <div style="color:var(--gold); font-size:11px; font-weight:bold; letter-spacing:1px; text-transform:uppercase; margin-bottom:8px;">⚙️ Painel de Testes</div>
+    <div style="font-family:'Oswald', sans-serif; font-size:20px; color:#fff; margin-bottom:15px;">Simulador de Demonstração</div>
+    
+    <button onclick="activateAdminVIP()" style="width:100%; background:linear-gradient(135deg, #ffe066, #f5c842); color:#000; border:none; border-radius:8px; padding:12px; font-weight:bold; font-size:13px; cursor:pointer; margin-bottom:12px; display:flex; align-items:center; justify-content:center; gap:6px;">👑 Ativar Acesso VIP (Modo Admin)</button>
+    <button onclick="runSimulatedRound()" style="width:100%; background:var(--gold); color:#000; border:none; border-radius:8px; padding:12px; font-weight:bold; font-size:13px; cursor:pointer; margin-bottom:12px;">🎲 Simular Resultados da Rodada 1</button>
+    <button onclick="runSimulatedRound()" style="width:100%; background:var(--gold); color:#000; border:none; border-radius:8px; padding:12px; font-weight:bold; font-size:13px; cursor:pointer; margin-bottom:12px;">🎲 Simular Resultados da Rodada 1</button>
+    <button onclick="resetSimulations()" style="width:100%; background:transparent; border:1px solid rgba(255,255,255,0.2); color:#fff; border-radius:8px; padding:10px; font-size:12px; cursor:pointer; margin-bottom:15px;">🔄 Limpar e Resetar Simulações</button>
+    
+    <div style="border-top: 1px solid rgba(255,255,255,0.08); padding-top:15px; text-align:left;">
+      <div style="font-size:11px; font-weight:bold; color:var(--gold); margin-bottom:8px;">Simular Placar de Jogo Específico</div>
+      <div style="font-size:10px; color:var(--text3); margin-bottom:8px;">México vs África do Sul (Jogo de Abertura):</div>
+      <div style="display:grid; grid-template-columns:1fr auto 1fr; gap:10px; align-items:center;">
+        <input type="number" id="sim-score-h" value="2" style="background:#000; border:1px solid rgba(255,255,255,0.1); border-radius:6px; padding:8px; color:#fff; text-align:center; font-weight:bold; width:100%;">
+        <span style="color:var(--text3)">x</span>
+        <input type="number" id="sim-score-a" value="1" style="background:#000; border:1px solid rgba(255,255,255,0.1); border-radius:6px; padding:8px; color:#fff; text-align:center; font-weight:bold; width:100%;">
+      </div>
+      <button onclick="applyManualSim()" style="width:100%; background:transparent; border:1px solid var(--accent); color:var(--accent); border-radius:6px; padding:8px; font-weight:bold; font-size:11px; cursor:pointer; margin-top:10px;">Aplicar Placar Manual</button>
+    </div>
+  </div>
+</div>`;
+document.body.insertAdjacentHTML('beforeend', demoPanelHtml);
+
+function activateAdminVIP() {
+  activePlan = 'Standard';
+  localStorage.setItem('userPlan', 'Standard');
+  localStorage.setItem('hasTelegramVIP', 'true');
+  
+  const proBadges = document.querySelectorAll('.badge-pro');
+  proBadges.forEach(b => {
+    b.textContent = 'STANDARD';
+    b.style.background = '#c5a85c';
+    b.style.color = '#000';
+  });
+  
+  const planSub = document.querySelector('.rank-hero-sub');
+  if (planSub) {
+    planSub.innerHTML = '👑 <strong>Seu Acesso VIP (Modo Admin) está Ativo!</strong>';
+    planSub.style.color = 'var(--gold)';
+  }
+  
+  renderVipPage();
+  updateVipTelegramButtonVisibility();
+  toggleSimPanel();
+  showToast('🔑 Modo Admin VIP + Telegram Ativado!');
+}
+
+function toggleSimPanel(e) {
+  if (e) e.stopPropagation();
+  const panel = document.getElementById('demo-sim-panel');
+  panel.style.display = panel.style.display === 'flex' ? 'none' : 'flex';
+}
+
+function runSimulatedRound() {
+  const simMatchesList = [
+    {h: 'Mexico', a: 'South Africa', sh: 2, sa: 1},
+    {h: 'United States', a: 'Morocco', sh: 1, sa: 1},
+    {h: 'Canada', a: 'Togo', sh: 3, sa: 0},
+    {h: 'Argentina', a: 'Tunisia', sh: 2, sa: 0},
+    {h: 'Brazil', a: 'Saudi Arabia', sh: 4, sa: 1}
+  ];
+  
+  simMatchesList.forEach(m => {
+    const key = `${m.h}_${m.a}`;
+    simulatedMatches[key] = {h: m.sh, a: m.sa};
+    liveResults[key] = {
+      homeScore: m.sh,
+      awayScore: m.sa,
+      status: 'FINISHED'
+    };
+  });
+  
+  loadMatches();
+  toggleSimPanel();
+  alert("Simulação de Resultados da Rodada 1 concluída com sucesso! Os cards e a pontuação da IA foram atualizados.");
+}
+
+function resetSimulations() {
+  simulatedMatches = {};
+  for(let key in liveResults) {
+    if(liveResults[key].status === 'FINISHED') {
+      delete liveResults[key];
+    }
+  }
+  loadMatches();
+  toggleSimPanel();
+  alert("Simulações limpas. Todos os jogos retornaram ao estado agendado.");
+}
+
+function applyManualSim() {
+  const sh = parseInt(document.getElementById('sim-score-h').value) || 0;
+  const sa = parseInt(document.getElementById('sim-score-a').value) || 0;
+  const key = "Mexico_South Africa";
+  
+  simulatedMatches[key] = {h: sh, a: sa};
+  liveResults[key] = {
+    homeScore: sh,
+    awayScore: sa,
+    status: 'FINISHED'
+  };
+  
+  loadMatches();
+  toggleSimPanel();
+  alert(`Placar de México vs África do Sul simulado manualmente para ${sh} x ${sa}!`);
+}
+
+function updateAIGamification(matches) {
+  let totalPoints = 0;
+  let exactCount = 0;
+  let vdCount = 0;
+  let winnerCount = 0;
+  let oneTeamGoals = 0;
+  let totalFinished = 0;
+
+  (matches || []).forEach(m => {
+    const key = `${m.home}_${m.away}`;
+    const liveData = liveResults[key];
+    const isFinished = m.status === 'FINISHED' || (liveData && liveData.status === 'FINISHED');
+    if (!isFinished) return;
+
+    const rH = (liveData && liveData.homeScore !== null) ? liveData.homeScore : ((m.score && m.score.home !== null) ? m.score.home : null);
+    const rA = (liveData && liveData.awayScore !== null) ? liveData.awayScore : ((m.score && m.score.away !== null) ? m.score.away : null);
+
+    if (rH === null || rA === null) return;
+
+    totalFinished++;
+
+    const pred = m.prediction;
+    if (!pred || !pred.suggested_score) return;
+
+    const pH = pred.suggested_score.home;
+    const pA = pred.suggested_score.away;
+
+    if (rH === pH && rA === pA) {
+      totalPoints += 5;
+      exactCount++;
+    } else {
+      const realDiff = rH - rA;
+      const predDiff = pH - pA;
+
+      const realWinner = realDiff > 0 ? 'home' : (realDiff < 0 ? 'away' : 'draw');
+      const predWinner = predDiff > 0 ? 'home' : (predDiff < 0 ? 'away' : 'draw');
+
+      if (realWinner === predWinner) {
+        if (realDiff === predDiff) {
+          totalPoints += 3;
+          vdCount++;
+        } else {
+          totalPoints += 2;
+          winnerCount++;
+        }
+      } else if (rH === pH || rA === pA) {
+        totalPoints += 1;
+        oneTeamGoals++;
+      }
+    }
+  });
+
+  const accuracy = totalFinished > 0 ? Math.round(((exactCount * 5 + vdCount * 3 + winnerCount * 2 + oneTeamGoals * 1) / (totalFinished * 5)) * 100) : 0;
+
+  document.getElementById('ai-total-points').textContent = totalPoints;
+  document.getElementById('ai-accuracy').textContent = accuracy + '%';
+  document.getElementById('ai-analyzed').textContent = totalFinished;
+  
+  document.getElementById('ai-exact-count').textContent = exactCount;
+  document.getElementById('ai-vd-count').textContent = vdCount;
+  document.getElementById('ai-winner-count').textContent = winnerCount;
+  document.getElementById('ai-oneteam-count').textContent = oneTeamGoals;
+}
+
+let ratingsCache = {};
+
+async function loadH2HDropdowns() {
+  try {
+    const r = await fetch(API + '/team-ratings');
+    const data = await r.json();
+    ratingsCache = data.ratings || {};
+    
+    const teamNames = Object.keys(ratingsCache).sort();
+    const selA = document.getElementById('h2h-team-a');
+    const selB = document.getElementById('h2h-team-b');
+    
+    if(selA && selB) {
+      const optionsHtml = teamNames.map(t => `<option value="${t}">${tName(t)}</option>`).join('');
+      selA.innerHTML = optionsHtml;
+      selB.innerHTML = optionsHtml;
+      
+      if(selA.options.length > 0) selA.value = 'Brazil';
+      if(selB.options.length > 1) selB.value = 'Argentina';
+    }
+  } catch (e) {
+    console.error("Failed to load H2H ratings:", e);
+  }
+}
+
+async function simulateH2H() {
+  const tA = document.getElementById('h2h-team-a').value;
+  const tB = document.getElementById('h2h-team-b').value;
+  
+  if (tA === tB) {
+    alert("Escolha seleções diferentes para simular o confronto.");
+    return;
+  }
+  
+  try {
+    const r = await fetch(`${API}/predict?home=${tA}&away=${tB}`);
+    const pred = await r.json();
+    
+    document.getElementById('h2h-result-panel').style.display = 'block';
+    
+    const pH = pred.suggested_score.home;
+    const pA = pred.suggested_score.away;
+    document.getElementById('h2h-predicted-score').textContent = `${pH} × ${pA}`;
+    
+    const probH = Math.round(pred.home_win_prob);
+    const probD = Math.round(pred.draw_prob);
+    const probA = Math.round(pred.away_win_prob);
+    
+    document.getElementById('h2h-lbl-win-a').textContent = `${tName(tA)}: ${probH}%`;
+    document.getElementById('h2h-lbl-draw').textContent = `${probD}%`;
+    document.getElementById('h2h-lbl-win-b').textContent = `${tName(tB)}: ${probA}%`;
+    
+    document.getElementById('h2h-bar-win-a').style.width = probH + '%';
+    document.getElementById('h2h-bar-draw').style.width = probD + '%';
+    document.getElementById('h2h-bar-win-b').style.width = probA + '%';
+    
+    document.getElementById('h2h-analysis').innerHTML = pred.summary || 'Simulação Dixon-Coles concluída com sucesso.';
+  } catch(e) {
+    alert("Erro ao rodar predição da API.");
+  }
+}
+
+function loadGroupSim() {
+  const gr = document.getElementById('group-sim-select').value;
+  
+  const groupTeams = [];
+  COPA_MATCHES.forEach(m => {
+    if(m.group === gr) {
+      if(!groupTeams.includes(m.home)) groupTeams.push(m.home);
+      if(!groupTeams.includes(m.away)) groupTeams.push(m.away);
+    }
+  });
+  
+  const chancesContainer = document.getElementById('group-sim-chances-container');
+  
+  const stats = {};
+  groupTeams.forEach(t => { stats[t] = { pts: 0, gd: 0, wins: 0, qualify: 0 }; });
+  
+  for(let run=0; run<100; run++) {
+    const standings = {};
+    groupTeams.forEach(t => { standings[t] = { pts: 0, gd: 0 }; });
+    
+    COPA_MATCHES.forEach(m => {
+      if(m.group === gr) {
+        const attH = ratingsCache[m.home] ? ratingsCache[m.home].att : 1.0;
+        const defH = ratingsCache[m.home] ? ratingsCache[m.home].def : 1.0;
+        const attA = ratingsCache[m.away] ? ratingsCache[m.away].att : 1.0;
+        const defA = ratingsCache[m.away] ? ratingsCache[m.away].def : 1.0;
+        
+        const lambdaH = attH * defA * 1.35;
+        const lambdaA = attA * defH * 1.15;
+        
+        const getGoals = (lambda) => {
+          let L = Math.exp(-lambda), k = 0, p = 1.0;
+          do { k++; p *= Math.random(); } while (p > L);
+          return k - 1;
+        };
+        
+        const gH = getGoals(lambdaH);
+        const gA = getGoals(lambdaA);
+        
+        if (gH > gA) { standings[m.home].pts += 3; }
+        else if (gA > gH) { standings[m.away].pts += 3; }
+        else { standings[m.home].pts += 1; standings[m.away].pts += 1; }
+        
+        standings[m.home].gd += (gH - gA);
+        standings[m.away].gd += (gA - gH);
+      }
+    });
+    
+    const sorted = Object.keys(standings).sort((a,b) => standings[b].pts - standings[a].pts || standings[b].gd - standings[a].gd);
+    stats[sorted[0]].qualify += 1;
+    stats[sorted[1]].qualify += 1;
+  }
+  
+  chancesContainer.innerHTML = groupTeams.map(t => {
+    const pct = stats[t] ? stats[t].qualify : 50;
+    const code = FLAG_CODES[t] || 'un';
+    return `
+      <div style="display:flex; align-items:center; justify-content:space-between; font-size:11px;">
+        <div style="display:flex; align-items:center; gap:6px;">
+          <img src="${FLAG(code)}" style="width:16px; height:12px; border-radius:2px;" alt="${tName(t)}">
+          <span>${tName(t)}</span>
+        </div>
+        <div style="display:flex; align-items:center; gap:8px; width:120px;">
+          <div style="flex:1; height:4px; background:rgba(255,255,255,0.05); border-radius:2px; overflow:hidden;">
+            <div style="width:${pct}%; height:100%; background:var(--accent);"></div>
+          </div>
+          <strong style="color:var(--accent); min-width:30px; text-align:right;">${pct}%</strong>
+        </div>
+      </div>`;
+  }).join('');
+
+  const atts = groupTeams.map(t => ratingsCache[t] ? ratingsCache[t].fifa : 1400);
+  const maxFifa = Math.max(...atts);
+  const minFifa = Math.min(...atts);
+  const diff = maxFifa - minFifa;
+  
+  let label = "Grupo do Duelo Tático";
+  let desc = "Grupo com duas forças destacadas e dois azarões competitivos.";
+  if (diff < 120) {
+    label = "Grupo da Morte ☠️";
+    desc = "Extremo equilíbrio técnico. O desvio das forças de ataque e defesa é mínimo, tornando as probabilidades de classificação completamente imprevisíveis.";
+  } else if (diff > 350) {
+    label = "Grupo de Favoritismo Absoluto 🏆";
+    desc = "Há uma seleção dominante que deve avançar sem dificuldades na liderança do grupo, com forte disputa pela segunda vaga.";
+  }
+  
+  document.getElementById('group-sim-opinion').innerHTML = `<strong style="color:var(--gold); display:block; margin-bottom:4px;">${label}</strong>${desc}`;
+  
+  const tableBody = document.getElementById('group-sim-table-body');
+  tableBody.innerHTML = groupTeams.map(t => {
+    const code = FLAG_CODES[t] || 'un';
+    return `
+      <tr style="border-bottom:1px solid rgba(255,255,255,0.03);">
+        <td style="text-align:left; padding:8px 4px; display:flex; align-items:center; gap:6px;">
+          <img src="${FLAG(code)}" style="width:14px; height:10px; border-radius:2px;" alt="${tName(t)}">
+          <strong>${tName(t)}</strong>
+        </td>
+        <td>0</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0</td>
+      </tr>`;
+  }).join('');
+  
+  document.getElementById('group-sim-results-container').style.display = 'none';
+}
+
+function runGroupMatchesSim() {
+  const gr = document.getElementById('group-sim-select').value;
+  const groupTeams = [];
+  COPA_MATCHES.forEach(m => {
+    if(m.group === gr) {
+      if(!groupTeams.includes(m.home)) groupTeams.push(m.home);
+      if(!groupTeams.includes(m.away)) groupTeams.push(m.away);
+    }
+  });
+
+  const standings = {};
+  groupTeams.forEach(t => { standings[t] = { pts: 0, wins: 0, draws: 0, losses: 0, gp: 0, gd: 0 }; });
+
+  const resultsList = [];
+
+  COPA_MATCHES.forEach(m => {
+    if(m.group === gr) {
+      const attH = ratingsCache[m.home] ? ratingsCache[m.home].att : 1.0;
+      const defH = ratingsCache[m.home] ? ratingsCache[m.home].def : 1.0;
+      const attA = ratingsCache[m.away] ? ratingsCache[m.away].att : 1.0;
+      const defA = ratingsCache[m.away] ? ratingsCache[m.away].def : 1.0;
+      
+      const lambdaH = attH * defA * 1.35;
+      const lambdaA = attA * defH * 1.15;
+      
+      const getGoals = (lambda) => {
+        let L = Math.exp(-lambda), k = 0, p = 1.0;
+        do { k++; p *= Math.random(); } while (p > L);
+        return k - 1;
+      };
+      
+      const gH = getGoals(lambdaH);
+      const gA = getGoals(lambdaA);
+      
+      standings[m.home].gp += gH;
+      standings[m.away].gp += gA;
+      standings[m.home].gd += (gH - gA);
+      standings[m.away].gd += (gA - gH);
+      
+      if (gH > gA) {
+        standings[m.home].pts += 3;
+        standings[m.home].wins += 1;
+        standings[m.away].losses += 1;
+      } else if (gA > gH) {
+        standings[m.away].pts += 3;
+        standings[m.away].wins += 1;
+        standings[m.home].losses += 1;
+      } else {
+        standings[m.home].pts += 1;
+        standings[m.home].draws += 1;
+        standings[m.away].pts += 1;
+        standings[m.away].draws += 1;
+      }
+      
+      const codeH = FLAG_CODES[m.home] || 'un';
+      const codeA = FLAG_CODES[m.away] || 'un';
+      resultsList.push(`
+        <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid rgba(255,255,255,0.03); padding:4px 0;">
+          <span style="display:inline-flex; align-items:center; gap:4px; width:45%;"><img src="${FLAG(codeH)}" style="width:12px; height:8px;"> ${tName(m.home)}</span>
+          <strong style="color:var(--gold);">${gH} - ${gA}</strong>
+          <span style="display:inline-flex; align-items:center; gap:4px; width:45%; justify-content:flex-end;">${tName(m.away)} <img src="${FLAG(codeA)}" style="width:12px; height:8px;"></span>
+        </div>`);
+    }
+  });
+
+  const sorted = Object.keys(standings).sort((a,b) => standings[b].pts - standings[a].pts || standings[b].gd - standings[a].gd || standings[b].gp - standings[a].gp);
+  
+  const tableBody = document.getElementById('group-sim-table-body');
+  tableBody.innerHTML = sorted.map((t, idx) => {
+    const code = FLAG_CODES[t] || 'un';
+    const rowBg = idx < 2 ? 'background:rgba(197,168,92,0.08);' : '';
+    const goldText = idx < 2 ? 'color:var(--gold); font-weight:bold;' : '';
+    return `
+      <tr style="border-bottom:1px solid rgba(255,255,255,0.03); ${rowBg}">
+        <td style="text-align:left; padding:8px 4px; display:flex; align-items:center; gap:6px; ${goldText}">
+          <span style="color:var(--text3); font-size:9px;">${idx+1}</span>
+          <img src="${FLAG(code)}" style="width:14px; height:10px; border-radius:2px;" alt="${tName(t)}">
+          <span>${tName(t)}</span>
+        </td>
+        <td><strong>${standings[t].pts}</strong></td>
+        <td>${standings[t].wins}</td>
+        <td>${standings[t].draws}</td>
+        <td>${standings[t].losses}</td>
+        <td>${standings[t].gp}</td>
+        <td style="${goldText}">${standings[t].gd > 0 ? '+' : ''}${standings[t].gd}</td>
+      </tr>`;
+  }).join('');
+
+  document.getElementById('group-sim-results-list').innerHTML = resultsList.join('');
+  document.getElementById('group-sim-results-container').style.display = 'block';
+}
+
+// Ensure dropdowns are loaded on first stats view and restore active plan UI
+document.addEventListener("DOMContentLoaded", () => {
+  // Update badge and text states based on activePlan
+  const proBadges = document.querySelectorAll('.badge-pro');
+  const planSub = document.querySelector('.rank-hero-sub');
+  
+  if (activePlan === 'VIP') {
+    proBadges.forEach(b => {
+      b.textContent = 'GOLD VIP';
+      b.style.background = 'linear-gradient(135deg, var(--gold), #d4a017)';
+      b.style.color = '#000';
+    });
+    if (planSub) {
+      planSub.innerHTML = '👑 <strong>Seu Plano VIP Gold está Ativo!</strong> Aproveite todas as ferramentas de inteligência analítica.';
+      planSub.style.color = 'var(--gold)';
+    }
+  } else if (activePlan === 'Standard') {
+    proBadges.forEach(b => {
+      b.textContent = 'STANDARD';
+      b.style.background = '#c5a85c';
+      b.style.color = '#000';
+    });
+    if (planSub) {
+      planSub.innerHTML = '⭐ <strong>Seu Plano Standard está Ativo!</strong> Faça o upgrade para o VIP Gold a qualquer momento.';
+      planSub.style.color = '#c5a85c';
+    }
+  } else {
+    proBadges.forEach(b => {
+      b.textContent = 'FREE';
+      b.style.background = '#3d4f6e';
+      b.style.color = '#fff';
+    });
+  }
+  
+  renderVipPage();
+  updateVipTelegramButtonVisibility();
+  checkVipUrlParam();
+
+  setTimeout(() => {
+    loadH2HDropdowns();
+    loadGroupSim();
+  }, 1000);
+});
+
+function closeVipWelcomeModal() {
+  document.getElementById('vip-welcome-modal').style.display = 'none';
+}
+
+function checkVipUrlParam() {
+  const urlParams = new URLSearchParams(window.location.search);
+  if (urlParams.get('vip') === 'true' || urlParams.get('telegram') === 'true') {
+    // Ativa o VIP no localStorage do cliente
+    localStorage.setItem('hasOpportunitiesHub', 'true');
+    // Atualiza a visualização das abas VIP
+    updateVipTelegramButtonVisibility();
+    // Exibe o modal dourado de boas-vindas
+    document.getElementById('vip-welcome-modal').style.display = 'flex';
+    
+    // Limpa a URL de forma elegante (remove o ?vip=true da barra de endereços para evitar compartilhamento)
+    const cleanUrl = window.location.protocol + "//" + window.location.host + window.location.pathname;
+    window.history.replaceState({path: cleanUrl}, '', cleanUrl);
+  }
+}
+</script>
+
+<!-- ALERTAS OVERLAY -->
+<div class="alerts-overlay" id="alerts-overlay" onclick="closeAlerts()"></div>
+
+<!-- ALERTAS DRAWER -->
+<div class="alerts-drawer" id="alerts-drawer">
+  <div class="alerts-header">
+    <h3>🔔 Alertas</h3>
+    <span class="alerts-close" onclick="closeAlerts()">✕</span>
+  </div>
+  <div class="alerts-list" id="alerts-list">
+    <div class="alerts-empty">
+      <div class="icon">🔔</div>
+      <div>Nenhum alerta ainda</div>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast-notif" id="toast-notif">
+  <div class="toast-title" id="toast-title"></div>
+  <div class="toast-body" id="toast-body"></div>
+</div>
+
+<!-- MODAL DE BOAS-VINDAS VIP (ORDER BUMP TELEGRAM) -->
+<div id="vip-welcome-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); backdrop-filter:blur(8px); z-index:10000; align-items:center; justify-content:center; padding:20px;">
+  <div style="background:#0d0d0d; border: 2px solid var(--gold); border-radius: 20px; padding: 30px 24px; width: 100%; max-width: 390px; box-shadow: 0 10px 40px rgba(0,0,0,0.7); text-align:center; position:relative; animation: fadeUp 0.3s ease;">
+    <button onclick="closeVipWelcomeModal()" style="position:absolute; top:15px; right:15px; background:none; border:none; color:var(--text2); font-size:20px; cursor:pointer; outline:none;">&times;</button>
+    
+    <div style="font-size: 54px; margin-bottom: 15px;">🏆</div>
+    <div style="color:var(--gold); font-size:12px; font-weight:bold; letter-spacing:1.5px; text-transform:uppercase; margin-bottom:8px;">Acesso Liberado!</div>
+    <div style="font-family:'Oswald', sans-serif; font-size:24px; color:#fff; margin-bottom:12px; font-weight:700;">BEM-VINDO AO VIP TELEGRAM</div>
+    
+    <div style="font-size:12.5px; color:var(--text2); margin-bottom:24px; line-height:1.6; text-align:left;">
+      Parabéns! O seu acesso ao <strong>Canal VIP de Alertas no Telegram</strong> foi ativado com sucesso. 
+      <br><br>
+      A partir de agora, a aba <strong>✈️ Canal VIP</strong> estará sempre liberada no topo do seu aplicativo. Clique no botão abaixo para entrar imediatamente no canal e receber os alertas mais urgentes da IA!
+    </div>
+    
+    <a href="https://t.me/+OUUV3GRyM4YwYmJh" target="_blank" onclick="closeVipWelcomeModal()" style="display: flex; align-items: center; justify-content: center; gap: 8px; background: #229ED9; color: #fff; font-family: var(--font); font-weight: bold; text-decoration: none; text-transform: uppercase; border-radius: 10px; padding: 14px; font-size: 14px; box-shadow: 0 4px 15px rgba(34,158,217,0.3); transition: transform 0.2s; width: 100%; border:none; outline:none; cursor:pointer; margin-bottom:12px;">
+      <span>✈️ Entrar no Canal VIP</span>
+    </a>
+    
+    <button onclick="closeVipWelcomeModal()" style="background: transparent; border: 1px solid rgba(255,255,255,0.15); color: var(--text2); border-radius: 10px; padding: 10px; font-size: 11px; cursor: pointer; width: 100%; outline:none;">
+      Fechar e explorar o app
+    </button>
+  </div>
+</div>
+
+</body>
+</html>
