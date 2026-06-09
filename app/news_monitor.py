@@ -9,6 +9,8 @@ import asyncio
 import httpx
 import time
 import re
+import html
+import xml.etree.ElementTree as ET
 from datetime import datetime, timezone
 from typing import Any
 from app import prediction_engine
@@ -199,69 +201,113 @@ async def check_odds_changes():
         else:
             _last_odds[match_key] = ref_odds
 
-async def check_simulated_news():
-    """Gera notícias simuladas realistas para demonstração.
-    Em produção: buscar de API de notícias esportivas.
-    """
-    import random
-    random.seed(int(time.time() / 3600))  # muda a cada hora
-
-    simulated_news = [
-        {
-            "title": "🚑 Vinicius Jr. dúvida para estreia do Brasil",
-            "body": "Atacante do Real Madrid sentiu dores no tornozelo no treino desta manhã. CT confirma que será reavaliado nas próximas 24h.",
-            "match": "Brazil",
-            "priority": "high",
-        },
-        {
-            "title": "✅ Mbappé confirmado titular contra a Argentina",
-            "body": "Técnico Deschamps confirmou o camisa 10 francês como titular na partida de amanhã. Probabilidade da França aumenta.",
-            "match": "France x Argentina",
-            "priority": "high",
-        },
-        {
-            "title": "🟥 Pedri suspenso — Espanha reformula meio-campo",
-            "body": "Craque do Barcelona cumpre suspensão automática. Sem Pedri, Espanha perde sua principal peça de criação.",
-            "match": "Spain",
-            "priority": "high",
-        },
-        {
-            "title": "⚡ Treino intenso da Argentina — Messi em grande forma",
-            "body": "Imagens do treino mostram Messi participando normalmente. Comissão confirma que a Argentina chega 100% para a Copa.",
-            "match": "Argentina",
-            "priority": "medium",
-        },
-        {
-            "title": "🌧️ Previsão de chuva intensa no jogo Brasil x México",
-            "body": "Meteorologistas preveem forte chuva no Estádio Rose Bowl. Condições adversas podem favorecer jogo de menos gols.",
-            "match": "Brazil x Mexico",
-            "priority": "medium",
-        },
+async def check_real_news():
+    """Busca notícias reais e atualizadas da Copa e seleções usando o feed RSS do Globo Esporte (GE)."""
+    rss_urls = [
+        "https://ge.globo.com/rss/ge/futebol/selecao-brasileira/",
+        "https://ge.globo.com/rss/ge/futebol-internacional/",
+        "https://ge.globo.com/rss/ge/futebol/"
     ]
+    
+    headers = {'User-Agent': 'Mozilla/5.0'}
+    
+    # Map portuguese names/variations to official team names in English
+    team_mapping = {
+        "brasil": "Brazil",
+        "argentina": "Argentina",
+        "frança": "France",
+        "espanha": "Spain",
+        "alemanha": "Germany",
+        "inglaterra": "England",
+        "portugal": "Portugal",
+        "holanda": "Netherlands",
+        "bélgica": "Belgium",
+        "itália": "Italy",
+        "uruguai": "Uruguay",
+        "colômbia": "Colombia",
+        "méxico": "Mexico",
+        "estados unidos": "USA",
+        "marrocos": "Morocco",
+        "japão": "Japan",
+        "croácia": "Croatia",
+        "senegal": "Senegal",
+        "equador": "Ecuador",
+        "suíça": "Switzerland",
+        "dinamarca": "Denmark"
+    }
 
-    # Rotação: a cada hora mostra uma notícia diferente
-    hour = int(time.time() / 3600)
-    news = simulated_news[hour % len(simulated_news)]
-
-    # Verificar se já foi mostrada recentemente
-    for a in _alerts[:10]:
-        if a.get("title") == news["title"]:
-            return  # já exibida
-
-    _add_alert(
-        alert_type="news",
-        title=news["title"],
-        body=news["body"],
-        match=news["match"],
-        priority=news["priority"],
-    )
+    # Desativar verificação estrita de SSL para evitar falhas em conexões locais/restritas
+    async with httpx.AsyncClient(verify=False) as client:
+        for url in rss_urls:
+            try:
+                resp = await client.get(url, headers=headers, timeout=10.0)
+                if resp.status_code != 200:
+                    continue
+                
+                # Parse XML do Feed
+                root = ET.fromstring(resp.content)
+                items = root.findall('.//item')
+                
+                for item in items:
+                    title_el = item.find('title')
+                    desc_el = item.find('description')
+                    
+                    if title_el is None:
+                        continue
+                    
+                    title = html.unescape(title_el.text or "").strip()
+                    desc = html.unescape(desc_el.text or "").strip() if desc_el is not None else ""
+                    
+                    # Limpar tags HTML remanescentes na descrição
+                    desc = re.sub('<[^<]+?>', '', desc)
+                    
+                    # Evitar duplicados (verifica os últimos 50 alertas)
+                    if any(a.get("title") == title for a in _alerts):
+                        continue
+                    
+                    text_to_search = (title + " " + desc).lower()
+                    
+                    # Filtrar notícias relevantes (relacionadas a desfalques, lesões, seleções ou copa)
+                    is_relevant = False
+                    priority = "medium"
+                    
+                    # Palavras-chave de alta prioridade (lesões/desfalques)
+                    if any(kw in text_to_search for kw in ["lesão", "lesao", "lesionado", "suspenso", "suspensão", "fora da copa", "desfalque", "fratura", "estiramento", "dores", "dm", "médico", "dúvida"]):
+                        is_relevant = True
+                        priority = "high"
+                    # Palavras-chave de média prioridade (escalação/preparação)
+                    elif any(kw in text_to_search for kw in ["escalação", "escalacao", "treino", "titular", "convocado", "copa do mundo", "copa 2026", "seleção", "selecao"]):
+                        is_relevant = True
+                        priority = "medium"
+                        
+                    if not is_relevant:
+                        continue
+                    
+                    # Tentar identificar qual país a notícia se refere
+                    match_team = ""
+                    for pt_name, eng_name in team_mapping.items():
+                        if pt_name in text_to_search:
+                            match_team = eng_name
+                            break
+                    
+                    # Adiciona o alerta real no sistema
+                    _add_alert(
+                        alert_type="news",
+                        title=title,
+                        body=desc if desc else title,
+                        match=match_team,
+                        priority=priority
+                    )
+                    
+            except Exception as e:
+                print(f"[MONITOR] Erro ao buscar/processar RSS do feed ({url}): {e}")
 
 async def monitoring_loop():
     """Loop principal de monitoramento — roda a cada 2 minutos."""
     global _running
     _running = True
     print("[MONITOR] Iniciando monitoramento de notícias e odds de todos os 72 jogos...")
-
+ 
     # Alerta inicial de boas-vindas
     _add_alert(
         alert_type="news",
@@ -269,14 +315,14 @@ async def monitoring_loop():
         body="Monitorando odds e notícias das 48 seleções em tempo real. Você será avisado de qualquer mudança importante.",
         priority="low",
     )
-
+ 
     while _running:
         try:
             await check_odds_changes()
-            await check_simulated_news()
+            await check_real_news()
         except Exception as e:
             print(f"[MONITOR] Erro: {e}")
-
+ 
         # Verificar a cada 2 minutos
         await asyncio.sleep(2 * 60)
 
