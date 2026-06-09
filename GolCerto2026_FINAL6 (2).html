@@ -2256,12 +2256,33 @@ document.addEventListener("DOMContentLoaded", () => {
   
   renderVipPage();
   updateVipTelegramButtonVisibility();
+  checkVipUrlParam();
 
   setTimeout(() => {
     loadH2HDropdowns();
     loadGroupSim();
   }, 1000);
 });
+
+function closeVipWelcomeModal() {
+  document.getElementById('vip-welcome-modal').style.display = 'none';
+}
+
+function checkVipUrlParam() {
+  const urlParams = new URLSearchParams(window.location.search);
+  if (urlParams.get('vip') === 'true' || urlParams.get('telegram') === 'true') {
+    // Ativa o VIP no localStorage do cliente
+    localStorage.setItem('hasOpportunitiesHub', 'true');
+    // Atualiza a visualização das abas VIP
+    updateVipTelegramButtonVisibility();
+    // Exibe o modal dourado de boas-vindas
+    document.getElementById('vip-welcome-modal').style.display = 'flex';
+    
+    // Limpa a URL de forma elegante (remove o ?vip=true da barra de endereços para evitar compartilhamento)
+    const cleanUrl = window.location.protocol + "//" + window.location.host + window.location.pathname;
+    window.history.replaceState({path: cleanUrl}, '', cleanUrl);
+  }
+}
 </script>
 
 <!-- ALERTAS OVERLAY -->
@@ -2285,6 +2306,31 @@ document.addEventListener("DOMContentLoaded", () => {
 <div class="toast-notif" id="toast-notif">
   <div class="toast-title" id="toast-title"></div>
   <div class="toast-body" id="toast-body"></div>
+</div>
+
+<!-- MODAL DE BOAS-VINDAS VIP (ORDER BUMP TELEGRAM) -->
+<div id="vip-welcome-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); backdrop-filter:blur(8px); z-index:10000; align-items:center; justify-content:center; padding:20px;">
+  <div style="background:#0d0d0d; border: 2px solid var(--gold); border-radius: 20px; padding: 30px 24px; width: 100%; max-width: 390px; box-shadow: 0 10px 40px rgba(0,0,0,0.7); text-align:center; position:relative; animation: fadeUp 0.3s ease;">
+    <button onclick="closeVipWelcomeModal()" style="position:absolute; top:15px; right:15px; background:none; border:none; color:var(--text2); font-size:20px; cursor:pointer; outline:none;">&times;</button>
+    
+    <div style="font-size: 54px; margin-bottom: 15px;">🏆</div>
+    <div style="color:var(--gold); font-size:12px; font-weight:bold; letter-spacing:1.5px; text-transform:uppercase; margin-bottom:8px;">Acesso Liberado!</div>
+    <div style="font-family:'Oswald', sans-serif; font-size:24px; color:#fff; margin-bottom:12px; font-weight:700;">BEM-VINDO AO VIP TELEGRAM</div>
+    
+    <div style="font-size:12.5px; color:var(--text2); margin-bottom:24px; line-height:1.6; text-align:left;">
+      Parabéns! O seu acesso ao <strong>Canal VIP de Alertas no Telegram</strong> foi ativado com sucesso. 
+      <br><br>
+      A partir de agora, a aba <strong>✈️ Canal VIP</strong> estará sempre liberada no topo do seu aplicativo. Clique no botão abaixo para entrar imediatamente no canal e receber os alertas mais urgentes da IA!
+    </div>
+    
+    <a href="https://t.me/+OUUV3GRyM4YwYmJh" target="_blank" onclick="closeVipWelcomeModal()" style="display: flex; align-items: center; justify-content: center; gap: 8px; background: #229ED9; color: #fff; font-family: var(--font); font-weight: bold; text-decoration: none; text-transform: uppercase; border-radius: 10px; padding: 14px; font-size: 14px; box-shadow: 0 4px 15px rgba(34,158,217,0.3); transition: transform 0.2s; width: 100%; border:none; outline:none; cursor:pointer; margin-bottom:12px;">
+      <span>✈️ Entrar no Canal VIP</span>
+    </a>
+    
+    <button onclick="closeVipWelcomeModal()" style="background: transparent; border: 1px solid rgba(255,255,255,0.15); color: var(--text2); border-radius: 10px; padding: 10px; font-size: 11px; cursor: pointer; width: 100%; outline:none;">
+      Fechar e explorar o app
+    </button>
+  </div>
 </div>
 
 </body>
