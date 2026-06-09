@@ -1635,12 +1635,24 @@ function renderVipPage() {
 function updateVipTelegramButtonVisibility() {
   const currentPlan = localStorage.getItem('userPlan') || 'Free';
   const btn = document.getElementById('vip-telegram-btn');
+  const isVip = localStorage.getItem('hasOpportunitiesHub') === 'true' || 
+                 localStorage.getItem('hasTelegramVIP') === 'true' || 
+                 currentPlan === 'VIP';
   
-  if (currentPlan === 'Standard') {
-    if (btn) btn.style.display = 'none'; // Hide checkout button from header once paid Standard
-  } else {
-    // Free tier: Show button as upgrade option
-    if (btn) {
+  if (btn) {
+    if (isVip) {
+      // User has already unlocked VIP: redirect directly to Telegram group modal
+      btn.style.display = 'flex';
+      btn.innerHTML = '<span>✈️ Canal VIP</span>';
+      btn.onclick = () => {
+        document.getElementById('vip-welcome-modal').style.display = 'flex';
+      };
+      btn.style.background = 'linear-gradient(135deg, #229ED9, #1a7ab5)';
+      btn.style.color = '#fff';
+    } else if (currentPlan === 'Standard') {
+      btn.style.display = 'none'; // Hide checkout button from header once paid Standard (if no VIP)
+    } else {
+      // Free tier: Show button as upgrade option
       btn.style.display = 'flex';
       btn.innerHTML = '<span>✈️ VIP - Telegram</span>';
       btn.onclick = () => handleSubscribe('Standard', 19.90);
