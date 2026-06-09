@@ -2084,7 +2084,13 @@ function loadGroupSim() {
     stats[sorted[1]].qualify += 1;
   }
   
-  chancesContainer.innerHTML = groupTeams.map(t => {
+  const sortedTeams = [...groupTeams].sort((a, b) => {
+    const qualifyA = stats[a] ? stats[a].qualify : 0;
+    const qualifyB = stats[b] ? stats[b].qualify : 0;
+    return qualifyB - qualifyA;
+  });
+  
+  chancesContainer.innerHTML = sortedTeams.map(t => {
     const pct = stats[t] ? stats[t].qualify : 50;
     const code = FLAG_CODES[t] || 'un';
     return `
