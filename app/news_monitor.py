@@ -134,72 +134,199 @@ def _odds_changed_significantly(old: dict, new: dict, threshold: float = 0.10) -
     return False
 
 async def check_odds_changes():
-    """Verifica se odds de todas as 72 partidas da Copa mudaram significativamente e gera alertas."""
+    """Verifica se odds de todas as 72 partidas da Copa mudaram significativamente usando a API real e gera alertas."""
     global _last_odds
-    import random
-
+    
+    api_key = os.environ.get("ODDS_API_KEY") or "854375276017769665c8034fae761c698f455901e155037dd3749b56d1de27e5"
+    if not api_key:
+        print("[MONITOR] Nenhuma chave de API de odds configurada.")
+        return
+        
+    print("[MONITOR] Buscando odds reais da Copa do Mundo via Odds-API.io...")
+    
+    headers = {'User-Agent': 'Mozilla/5.0'}
+    
+    # 1. Obter todos os eventos de futebol
+    events_url = f"https://api.odds-api.io/v3/events?sport=football&apiKey={api_key}"
+    events = []
+    try:
+        async with httpx.AsyncClient(verify=False) as client:
+            resp = await client.get(events_url, headers=headers, timeout=12.0)
+            if resp.status_code == 200:
+                events = resp.json()
+            else:
+                print(f"[MONITOR] Falha ao obter eventos: {resp.text}")
+                return
+    except Exception as e:
+        print(f"[MONITOR] Erro de rede ao buscar eventos: {e}")
+        return
+        
+    # Filtrar apenas eventos da Copa do Mundo
+    wc_events = []
+    for ev in events:
+        league = ev.get("league", {})
+        l_name = league.get("name", "").lower()
+        l_slug = league.get("slug", "").lower()
+        if "world cup" in l_name or "world-cup" in l_slug:
+            wc_events.append(ev)
+            
+    if not wc_events:
+        print("[MONITOR] Nenhum evento da Copa do Mundo encontrado na API no momento.")
+        return
+        
+    # Mapear eventos aos nossos jogos da Copa
     matches = prediction_engine.COPA_MATCHES
-
+    mapped_events = [] # lista de (match_dict, event_id)
+    
     for m in matches:
-        match_key = f"{m['home']} x {m['away']}"
-        ref_odds = _last_odds.get(match_key) or {
-            "home": m["oh"],
-            "draw": m["od"],
-            "away": m["oa"]
-        }
-
-        # 15% de chance de mudar a odd a cada rodada de verificação para simular flutuações reais
-        if random.random() < 0.15:
-            # Simular variação realista de ±8%
-            variation = {
-                "home": round(ref_odds["home"] * random.uniform(0.92, 1.08), 2),
-                "draw": round(ref_odds["draw"] * random.uniform(0.95, 1.05), 2),
-                "away": round(ref_odds["away"] * random.uniform(0.92, 1.08), 2),
-            }
-            # Evitar odds menores que 1.05
-            variation["home"] = max(1.05, variation["home"])
-            variation["draw"] = max(1.05, variation["draw"])
-            variation["away"] = max(1.05, variation["away"])
-
-            # Predict using our Dixon-Coles engine
-            old_pred_data = prediction_engine.predict_match(m["home"], m["away"], ref_odds["home"], ref_odds["draw"], ref_odds["away"], m.get("venue"))
-            new_pred_data = prediction_engine.predict_match(m["home"], m["away"], variation["home"], variation["draw"], variation["away"], m.get("venue"))
-
-            old_pred = old_pred_data['suggested_score']['score']
-            new_pred = new_pred_data['suggested_score']['score']
-
-            # Atualiza na origem do prediction_engine
-            m["oh"] = variation["home"]
-            m["od"] = variation["draw"]
-            m["oa"] = variation["away"]
-
-            home_team_pt = prediction_engine.PORTUGUESE_TEAM_NAMES.get(m["home"], m["home"])
-            away_team_pt = prediction_engine.PORTUGUESE_TEAM_NAMES.get(m["away"], m["away"])
-            match_key_pt = f"{home_team_pt} x {away_team_pt}"
-
-            if old_pred != new_pred:
-                _add_alert(
-                    alert_type="prediction_change",
-                    title=f"🔄 Palpite da IA mudou — {match_key_pt}!",
-                    body=f"De {old_pred} para {new_pred}. Nova calibração de odds: Mandante {variation['home']}, Empate {variation['draw']}, Visitante {variation['away']}.",
-                    match=match_key_pt,
-                    priority="high",
-                )
-            elif _odds_changed_significantly(ref_odds, variation, threshold=0.08):
-                home_diff = variation["home"] - ref_odds["home"]
-                who = home_team_pt if home_diff < 0 else away_team_pt if home_diff > 0 else ""
-                direction = "favorito" if home_diff < 0 else "azarão"
-                _add_alert(
-                    alert_type="odds_change",
-                    title=f"📊 Odds alteradas — {match_key_pt}",
-                    body=f"{who} ficou mais {direction} nas casas de apostas (palpite mantido: {new_pred}). Novas odds: {variation['home']} | {variation['draw']} | {variation['away']}",
-                    match=match_key_pt,
-                    priority="medium",
-                )
-
-            _last_odds[match_key] = variation
-        else:
-            _last_odds[match_key] = ref_odds
+        m_home = m["home"].lower()
+        m_away = m["away"].lower()
+        for ev in wc_events:
+            ev_home = ev.get("home", "").lower()
+            ev_away = ev.get("away", "").lower()
+            
+            # Checar correspondência exata
+            if (m_home == ev_home and m_away == ev_away) or (m_home == ev_away and m_away == ev_home):
+                mapped_events.append((m, ev["id"]))
+                break
+                
+    if not mapped_events:
+        print("[MONITOR] Não foi possível correlacionar nenhum jogo da Copa local com os eventos da API.")
+        return
+        
+    # Agrupar os IDs de eventos para busca em lote (multi) de no máximo 10 de cada vez
+    event_chunks = []
+    current_chunk = []
+    for m, ev_id in mapped_events:
+        current_chunk.append((m, ev_id))
+        if len(current_chunk) == 10:
+            event_chunks.append(current_chunk)
+            current_chunk = []
+    if current_chunk:
+        event_chunks.append(current_chunk)
+        
+    # 2. Puxar odds em lote para cada chunk
+    for chunk in event_chunks:
+        chunk_ids = ",".join(str(item[1]) for item in chunk)
+        odds_url = f"https://api.odds-api.io/v3/odds/multi?eventIds={chunk_ids}&bookmakers=Bet365&apiKey={api_key}"
+        try:
+            async with httpx.AsyncClient(verify=False) as client:
+                resp = await client.get(odds_url, headers=headers, timeout=12.0)
+                if resp.status_code != 200:
+                    print(f"[MONITOR] Falha ao obter odds em lote: {resp.text}")
+                    continue
+                
+                odds_data_list = resp.json()
+                
+                # Mapear resposta de volta para as partidas correspondentes
+                for ev_odds in odds_data_list:
+                    ev_id = ev_odds.get("id")
+                    bookies = ev_odds.get("bookmakers", {})
+                    
+                    # Buscar odds da Bet365
+                    bet365_markets = bookies.get("Bet365") or bookies.get("Bet365 (no latency)")
+                    if not bet365_markets:
+                        continue
+                        
+                    ml_odds = None
+                    for market in bet365_markets:
+                        if market.get("name") == "ML":
+                            odds_list = market.get("odds", [{}])
+                            if odds_list:
+                                ml_odds = odds_list[0]
+                                break
+                                
+                    if not ml_odds:
+                        continue
+                        
+                    # Obter os valores das odds
+                    try:
+                        home_odd = float(ml_odds.get("home"))
+                        draw_odd = float(ml_odds.get("draw"))
+                        away_odd = float(ml_odds.get("away"))
+                    except (ValueError, TypeError):
+                        continue
+                        
+                    # Encontrar a partida correspondente no chunk
+                    matched_match = None
+                    for m, c_ev_id in chunk:
+                        if c_ev_id == ev_id:
+                            matched_match = m
+                            break
+                            
+                    if not matched_match:
+                        continue
+                        
+                    # Checar se a ordem do time da API está invertida em relação à nossa partida
+                    api_home = ev_odds.get("home", "").lower()
+                    m_home = matched_match["home"].lower()
+                    if api_home != m_home:
+                        home_odd, away_odd = away_odd, home_odd
+                        
+                    match_key = f"{matched_match['home']} x {matched_match['away']}"
+                    
+                    ref_odds = _last_odds.get(match_key) or {
+                        "home": matched_match["oh"],
+                        "draw": matched_match["od"],
+                        "away": matched_match["oa"]
+                    }
+                    
+                    variation = {
+                        "home": home_odd,
+                        "draw": draw_odd,
+                        "away": away_odd
+                    }
+                    
+                    # Calcular predições para checar mudança
+                    old_pred_data = prediction_engine.predict_match(
+                        matched_match["home"], matched_match["away"], 
+                        ref_odds["home"], ref_odds["draw"], ref_odds["away"], 
+                        matched_match.get("venue")
+                    )
+                    new_pred_data = prediction_engine.predict_match(
+                        matched_match["home"], matched_match["away"], 
+                        variation["home"], variation["draw"], variation["away"], 
+                        matched_match.get("venue")
+                    )
+                    
+                    old_pred = old_pred_data['suggested_score']['score']
+                    new_pred = new_pred_data['suggested_score']['score']
+                    
+                    # Atualizar na fonte do prediction_engine
+                    matched_match["oh"] = variation["home"]
+                    matched_match["od"] = variation["draw"]
+                    matched_match["oa"] = variation["away"]
+                    
+                    home_team_pt = prediction_engine.PORTUGUESE_TEAM_NAMES.get(matched_match["home"], matched_match["home"])
+                    away_team_pt = prediction_engine.PORTUGUESE_TEAM_NAMES.get(matched_match["away"], matched_match["away"])
+                    match_key_pt = f"{home_team_pt} x {away_team_pt}"
+                    
+                    # Se o palpite da IA mudou
+                    if old_pred != new_pred:
+                        _add_alert(
+                            alert_type="prediction_change",
+                            title=f"🔄 Palpite da IA mudou — {match_key_pt}!",
+                            body=f"De {old_pred} para {new_pred}. Nova calibração de odds reais da Bet365: Mandante {variation['home']}, Empate {variation['draw']}, Visitante {variation['away']}.",
+                            match=match_key_pt,
+                            priority="high",
+                        )
+                    # Ou se as odds mudaram significativamente
+                    elif _odds_changed_significantly(ref_odds, variation, threshold=0.08):
+                        home_diff = variation["home"] - ref_odds["home"]
+                        who = home_team_pt if home_diff < 0 else away_team_pt if home_diff > 0 else ""
+                        direction = "favorito" if home_diff < 0 else "azarão"
+                        _add_alert(
+                            alert_type="odds_change",
+                            title=f"📊 Odds alteradas — {match_key_pt}",
+                            body=f"{who} ficou mais {direction} nas casas de apostas (palpite mantido: {new_pred}). Novas odds: {variation['home']} | {variation['draw']} | {variation['away']}",
+                            match=match_key_pt,
+                            priority="medium",
+                        )
+                        
+                    _last_odds[match_key] = variation
+                    
+        except Exception as chunk_err:
+            print(f"[MONITOR] Erro ao buscar odds do lote {chunk_ids}: {chunk_err}")
 
 async def check_real_news():
     """Busca notícias reais e atualizadas da Copa e seleções usando o feed RSS do Globo Esporte (GE)."""
