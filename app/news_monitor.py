@@ -20,6 +20,7 @@ _alerts: list[dict] = []          # alertas gerados
 _last_predictions: dict = {}      # palpites anteriores por jogo
 _last_odds: dict = {}             # odds anteriores por jogo
 _running = False
+_last_recap_time = 0.0
 
 # ─── ODDS ATUAIS (simuladas com variação realista) ────────────────────────────
 BASE_ODDS = {
@@ -468,6 +469,58 @@ async def check_real_news():
             except Exception as e:
                 print(f"[MONITOR] Erro ao buscar/processar RSS do feed ({url}): {e}")
 
+async def send_periodic_recap():
+    """Compila e envia um boletim VIP periódico com as melhores oportunidades do dia."""
+    import os
+    try:
+        matches = prediction_engine.get_matches_with_predictions()
+        valid_matches = [m for m in matches if m.get('prediction')]
+        # Ordenar por maior confiança
+        valid_matches.sort(key=lambda m: m['prediction'].get('confidence', 0), reverse=True)
+        
+        top_opportunities = valid_matches[:3]
+        
+        msg_body = (
+            "📊 *BOLETIM DE OPORTUNIDADES VIP*\n\n"
+            "Aqui estão as 3 melhores predições de IA com maior índice de confiança para os próximos jogos:\n\n"
+        )
+        
+        for m in top_opportunities:
+            pred = m['prediction']
+            home_pt = prediction_engine.PORTUGUESE_TEAM_NAMES.get(m['home'], m['home'])
+            away_pt = prediction_engine.PORTUGUESE_TEAM_NAMES.get(m['away'], m['away'])
+            score = pred['suggested_score']['score']
+            confidence = pred['confidence']
+            msg_body += f"⚽ *{home_pt} x {away_pt}*\n"
+            msg_body += f"   • Sugestão de Placar: {score}\n"
+            msg_body += f"   • Confiança do Modelo: {confidence}%\n\n"
+            
+        msg_body += (
+            "🏆 *Favoritos ao Título (Monte Carlo):*\n"
+            "1. Espanha 🇪🇸 — 17.2%\n"
+            "2. França 🇫🇷 — 16.1%\n"
+            "3. Inglaterra 🏴󠁧󠁢󠁥󠁮󠁧󠁿 — 10.8%\n\n"
+            "⚡ Fique atento a novas variações de odds em tempo real!"
+        )
+        
+        token = os.environ.get("TELEGRAM_BOT_TOKEN")
+        chat_id = os.environ.get("TELEGRAM_CHAT_ID")
+        if token and chat_id:
+            url = f"https://api.telegram.org/bot{token}/sendMessage"
+            async with httpx.AsyncClient() as client:
+                resp = await client.post(url, json={
+                    "chat_id": chat_id,
+                    "text": msg_body,
+                    "parse_mode": "Markdown",
+                    "disable_web_page_preview": True
+                })
+                if resp.status_code == 200:
+                    print("[MONITOR] Boletim VIP periódico enviado com sucesso ao Telegram.")
+                else:
+                    print(f"[MONITOR] Falha ao enviar boletim periódico: {resp.text}")
+    except Exception as e:
+        print(f"[MONITOR] Erro ao gerar boletim periódico: {e}")
+
 async def monitoring_loop():
     """Loop principal de monitoramento — roda a cada 2 minutos."""
     global _running
@@ -486,6 +539,14 @@ async def monitoring_loop():
         try:
             await check_odds_changes()
             await check_real_news()
+            
+            # Executar boletim VIP periódico a cada 8 horas (ou no primeiro ciclo de execução)
+            current_time = time.time()
+            global _last_recap_time
+            # Se for a primeira execução (_last_recap_time == 0) ou se passaram 8 horas
+            if _last_recap_time == 0.0 or (current_time - _last_recap_time >= 8 * 60 * 60):
+                await send_periodic_recap()
+                _last_recap_time = current_time
         except Exception as e:
             print(f"[MONITOR] Erro: {e}")
  
