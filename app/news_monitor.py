@@ -332,7 +332,7 @@ async def check_real_news():
     """Busca notícias reais e atualizadas da Copa e seleções usando o feed RSS do Globo Esporte (GE)."""
     rss_urls = [
         "https://ge.globo.com/rss/ge/futebol/selecao-brasileira/",
-        "https://ge.globo.com/rss/ge/futebol-internacional/"
+        "https://ge.globo.com/rss/ge/futebol/"
     ]
     
     headers = {'User-Agent': 'Mozilla/5.0'}
@@ -359,7 +359,26 @@ async def check_real_news():
         "senegal": "Senegal",
         "equador": "Ecuador",
         "suíça": "Switzerland",
-        "dinamarca": "Denmark"
+        "dinamarca": "Denmark",
+        "canadá": "Canada",
+        "egito": "Egypt",
+        "iscorreg": "Scotland",
+        "escócia": "Scotland",
+        "paraguai": "Paraguay",
+        "tunísia": "Tunisia",
+        "argélia": "Algeria",
+        "polônia": "Poland",
+        "suecia": "Sweden",
+        "suécia": "Sweden",
+        "noruega": "Norway",
+        "cabo verde": "Cape Verde",
+        "curaçao": "Curaçao",
+        "curaçao": "Curaçao",
+        "irã": "Iran",
+        "gales": "Wales",
+        "gana": "Ghana",
+        "camarões": "Cameroon",
+        "costa do marfim": "Ivory Coast"
     }
 
     # Palavras-chave de clubes nacionais a serem excluídos (para evitar notícias de torneios locais)
@@ -418,8 +437,12 @@ async def check_real_news():
                     if any(kw in text_to_search for kw in ["lesão", "lesao", "lesionado", "suspenso", "suspensão", "fora da copa", "desfalque", "fratura", "estiramento", "dores", "dm", "médico", "dúvida"]):
                         is_relevant = True
                         priority = "high"
-                    # Palavras-chave de média prioridade (escalação/preparação)
+                    # Palavras-chave de média prioridade (escalação/preparação/seleção)
                     elif any(kw in text_to_search for kw in ["escalação", "escalacao", "treino", "titular", "convocado", "copa do mundo", "copa 2026", "seleção", "selecao", "mundial"]):
+                        is_relevant = True
+                        priority = "medium"
+                    # Se mencionar qualquer seleção da Copa do Mundo e termos esportivos
+                    elif any(pt_team in text_to_search for pt_team in team_mapping.keys()) and any(kw in text_to_search for kw in ["amistoso", "treino", "jogo", "estréia", "estreia", "convoca", "prepara"]):
                         is_relevant = True
                         priority = "medium"
                         
