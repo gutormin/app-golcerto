@@ -809,7 +809,7 @@ def run_monte_carlo(iterations: int = 5000) -> List[Dict[str, Any]]:
     rankings.sort(key=lambda item: item['probability'], reverse=True)
     
     # Calibrate to match typical bookmaker odds curves
-    BOOKMAKER_TEMPLATE = [16.8, 15.2, 13.8, 11.5, 9.2, 8.4, 7.2, 5.1, 4.2, 3.0, 2.1, 1.5, 1.0, 0.8, 0.5, 0.3, 0.2, 0.1, 0.1]
+    BOOKMAKER_TEMPLATE = [16.5, 14.8, 13.2, 11.8, 10.5, 9.8, 8.8, 5.2, 4.2, 3.0, 2.1, 1.5, 1.0, 0.8, 0.5, 0.3, 0.2, 0.1, 0.1]
     
     calibrated_probs = []
     for idx, item in enumerate(rankings):
