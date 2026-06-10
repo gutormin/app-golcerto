@@ -646,7 +646,7 @@ def predict_match(home: str, away: str, odds_home: float = None, odds_draw: floa
         'score': f"{best_score_tuple[0]}–{best_score_tuple[1]}"
     }
     
-    model_confidence = min(max(int(top_scores[0]['probability'] * 2.5 + abs(p_home_win - p_away_win) * 0.4), 45), 95)
+    model_confidence = min(max(int(70 + top_scores[0]['probability'] * 0.8 + abs(p_home_win - p_away_win) * 0.35), 70), 97)
     
     summary = get_match_summary(home, away, venue, lambda_home, lambda_away, fav_outcome)
     news = {
