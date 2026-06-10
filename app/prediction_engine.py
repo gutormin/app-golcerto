@@ -561,9 +561,20 @@ def predict_match(home: str, away: str, odds_home: float = None, odds_draw: floa
                 
     total_grid_p = sum(prob_grid.values())
     if total_grid_p > 0:
-        p_home_win = (p_home_win / total_grid_p) * 100
-        p_draw = (p_draw / total_grid_p) * 100
-        p_away_win = (p_away_win / total_grid_p) * 100
+        if odds_home and odds_draw and odds_away:
+            # Puxa como referência direta as odds das casas de apostas e transforma em %
+            o_h_prob = 1.0 / odds_home
+            o_d_prob = 1.0 / odds_draw
+            o_a_prob = 1.0 / odds_away
+            total_implied = o_h_prob + o_d_prob + o_a_prob
+            p_home_win = (o_h_prob / total_implied) * 100
+            p_draw = (o_d_prob / total_implied) * 100
+            p_away_win = (o_a_prob / total_implied) * 100
+        else:
+            p_home_win = (p_home_win / total_grid_p) * 100
+            p_draw = (p_draw / total_grid_p) * 100
+            p_away_win = (p_away_win / total_grid_p) * 100
+            
         for k in prob_grid:
             prob_grid[k] = (prob_grid[k] / total_grid_p) * 100
             
