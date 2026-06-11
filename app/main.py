@@ -188,3 +188,29 @@ async def get_matches():
         return {"matches": matches, "count": len(matches)}
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Erro ao obter partidas: {str(e)}")
+
+@app.get("/telegram-test")
+async def telegram_test():
+    import httpx
+    import os
+    token = os.environ.get("TELEGRAM_BOT_TOKEN")
+    chat_id = os.environ.get("TELEGRAM_CHAT_ID")
+    if not token or not chat_id:
+        return {"error": "Credentials missing", "token_exists": bool(token), "chat_id_exists": bool(chat_id)}
+    
+    url = f"https://api.telegram.org/bot{token}/sendMessage"
+    try:
+        async with httpx.AsyncClient() as client:
+            resp = await client.post(url, json={
+                "chat_id": chat_id,
+                "text": "🔌 *GolCerto 2026* — Teste de envio de sinal via API",
+                "parse_mode": "Markdown"
+            })
+            return {
+                "status_code": resp.status_code,
+                "response": resp.json(),
+                "token_prefix": token[:10] if token else "",
+                "chat_id": chat_id
+            }
+    except Exception as e:
+        return {"error": str(e)}
