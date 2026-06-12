@@ -857,7 +857,8 @@ def get_cached_rankings() -> List[Dict[str, Any]]:
     return _cached_rankings
 
 REAL_MATCH_RESULTS = {
-    ("Mexico", "South Africa"): (2, 0)
+    ("Mexico", "South Africa"): (2, 0),
+    ("South Korea", "Czech Republic"): (2, 1)
 }
 
 def get_finished_score(home: str, away: str, pred_home: int, pred_away: int) -> Tuple[int, int]:
@@ -893,6 +894,28 @@ def get_finished_score(home: str, away: str, pred_home: int, pred_away: int) -> 
             choices = [(1, 0), (2, 1), (0, 1), (1, 2)]
             return choices[h % len(choices)]
 
+def get_live_score(home: str, away: str, final_home: int, final_away: int, elapsed_minutes: int) -> Tuple[int, int]:
+    """Distributes goals deterministically over the 90 minutes of an active match."""
+    home_goal_minutes = []
+    for i in range(final_home):
+        h = get_deterministic_hash(f"{home}_{away}_home_goal_{i}", 9876)
+        m = 5 + (h % 80)
+        if m >= 45:
+            m += 15
+        home_goal_minutes.append(m)
+        
+    away_goal_minutes = []
+    for i in range(final_away):
+        h = get_deterministic_hash(f"{home}_{away}_away_goal_{i}", 5432)
+        m = 5 + (h % 80)
+        if m >= 45:
+            m += 15
+        away_goal_minutes.append(m)
+        
+    current_home = sum(1 for m in home_goal_minutes if m <= elapsed_minutes)
+    current_away = sum(1 for m in away_goal_minutes if m <= elapsed_minutes)
+    return current_home, current_away
+
 def get_matches_with_predictions() -> List[Dict[str, Any]]:
     """Returns all 72 matches with pre-calculated predictions."""
     from datetime import datetime, timezone, timedelta
@@ -916,7 +939,12 @@ def get_matches_with_predictions() -> List[Dict[str, Any]]:
             score = {'home': h_score, 'away': a_score}
         elif match_dt <= now_brt < match_dt + timedelta(hours=2):
             status = 'IN_PLAY'
-            score = {'home': 0, 'away': 0}
+            pred_home = pred['suggested_score']['home']
+            pred_away = pred['suggested_score']['away']
+            final_home, final_away = get_finished_score(m['home'], m['away'], pred_home, pred_away)
+            elapsed_minutes = int((now_brt - match_dt).total_seconds() / 60)
+            h_score, a_score = get_live_score(m['home'], m['away'], final_home, final_away, elapsed_minutes)
+            score = {'home': h_score, 'away': a_score}
         else:
             status = 'SCHEDULED'
             score = {'home': None, 'away': None}
