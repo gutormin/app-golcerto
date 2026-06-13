@@ -861,6 +861,40 @@ REAL_MATCH_RESULTS = {
     ("South Korea", "Czech Republic"): (2, 1)
 }
 
+REAL_MATCH_RESULTS_LIVE = {}
+
+async def update_live_results_loop():
+    """Periodically fetches live scores from openfootball repository (every 5 minutes)."""
+    while True:
+        try:
+            print("[LIVE RESULTS] Checking for updates on github openfootball...")
+            url = "https://raw.githubusercontent.com/openfootball/worldcup.json/master/2026/worldcup.json"
+            async with httpx.AsyncClient(timeout=10.0) as client:
+                resp = await client.get(url)
+                if resp.status_code == 200:
+                    data = resp.json()
+                    new_results = {}
+                    for match in data.get("matches", []):
+                        team1 = match.get("team1")
+                        team2 = match.get("team2")
+                        score = match.get("score")
+                        if team1 and team2 and score and "ft" in score:
+                            # Normalize names to match COPA_MATCHES (e.g. Bosnia & Herzegovina -> Bosnia)
+                            t1 = team1.replace(" & Herzegovina", "")
+                            t2 = team2.replace(" & Herzegovina", "")
+                            ft = score["ft"]
+                            if ft and len(ft) == 2 and ft[0] is not None and ft[1] is not None:
+                                new_results[(t1, t2)] = (ft[0], ft[1])
+                                
+                    if new_results:
+                        global REAL_MATCH_RESULTS_LIVE
+                        REAL_MATCH_RESULTS_LIVE = new_results
+                        print(f"[LIVE RESULTS] Successfully updated {len(REAL_MATCH_RESULTS_LIVE)} results from openfootball.")
+        except Exception as e:
+            print(f"[LIVE RESULTS] Error fetching live results: {e}")
+            
+        await asyncio.sleep(5 * 60) # 5 minutes
+
 def get_finished_score(home: str, away: str, pred_home: int, pred_away: int) -> Tuple[int, int]:
     key = (home, away)
     if key in REAL_MATCH_RESULTS:
@@ -916,6 +950,36 @@ def get_live_score(home: str, away: str, final_home: int, final_away: int, elaps
     current_away = sum(1 for m in away_goal_minutes if m <= elapsed_minutes)
     return current_home, current_away
 
+def get_match_outcome(home: str, away: str, status: str, elapsed_minutes: int, pred_home: int, pred_away: int) -> Dict[str, Any]:
+    t1 = home.replace(" & Herzegovina", "")
+    t2 = away.replace(" & Herzegovina", "")
+    
+    score_live = None
+    for k, v in REAL_MATCH_RESULTS_LIVE.items():
+        if (k[0] == t1 and k[1] == t2) or (k[0] == t2 and k[1] == t1):
+            if k[0] == t1:
+                score_live = v
+            else:
+                score_live = (v[1], v[0])
+            break
+            
+    if score_live is not None:
+        return {'home': score_live[0], 'away': score_live[1]}
+        
+    for k, v in REAL_MATCH_RESULTS.items():
+        if (k[0] == home and k[1] == away) or (k[0] == away and k[1] == home):
+            if k[0] == home:
+                return {'home': v[0], 'away': v[1]}
+            else:
+                return {'home': v[1], 'away': v[0]}
+                
+    final_home, final_away = get_finished_score(home, away, pred_home, pred_away)
+    if status == 'IN_PLAY':
+        h_score, a_score = get_live_score(home, away, final_home, final_away, elapsed_minutes)
+        return {'home': h_score, 'away': a_score}
+    else:
+        return {'home': final_home, 'away': final_away}
+
 def get_matches_with_predictions() -> List[Dict[str, Any]]:
     """Returns all 72 matches with pre-calculated predictions."""
     from datetime import datetime, timezone, timedelta
@@ -933,20 +997,19 @@ def get_matches_with_predictions() -> List[Dict[str, Any]]:
         
         if now_brt >= match_dt + timedelta(hours=2):
             status = 'FINISHED'
-            pred_home = pred['suggested_score']['home']
-            pred_away = pred['suggested_score']['away']
-            h_score, a_score = get_finished_score(m['home'], m['away'], pred_home, pred_away)
-            score = {'home': h_score, 'away': a_score}
+            elapsed_minutes = 120
         elif match_dt <= now_brt < match_dt + timedelta(hours=2):
             status = 'IN_PLAY'
-            pred_home = pred['suggested_score']['home']
-            pred_away = pred['suggested_score']['away']
-            final_home, final_away = get_finished_score(m['home'], m['away'], pred_home, pred_away)
             elapsed_minutes = int((now_brt - match_dt).total_seconds() / 60)
-            h_score, a_score = get_live_score(m['home'], m['away'], final_home, final_away, elapsed_minutes)
-            score = {'home': h_score, 'away': a_score}
         else:
             status = 'SCHEDULED'
+            elapsed_minutes = 0
+            
+        if status in ['FINISHED', 'IN_PLAY']:
+            pred_home = pred['suggested_score']['home']
+            pred_away = pred['suggested_score']['away']
+            score = get_match_outcome(m['home'], m['away'], status, elapsed_minutes, pred_home, pred_away)
+        else:
             score = {'home': None, 'away': None}
             
         results.append({

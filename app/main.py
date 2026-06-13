@@ -15,6 +15,7 @@ async def lifespan(app: FastAPI):
     prediction_engine.get_cached_rankings()
     # Fetch real news on startup and run background loop
     asyncio.create_task(prediction_engine.update_all_news_cache_loop())
+    asyncio.create_task(prediction_engine.update_live_results_loop())
     task = asyncio.create_task(news_monitor.monitoring_loop())
     yield
     task.cancel()
