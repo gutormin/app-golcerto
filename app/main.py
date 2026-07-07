@@ -13,16 +13,15 @@ async def lifespan(app: FastAPI):
     """Inicia o monitoramento quando a API sobe."""
     # Run a fast Monte Carlo simulation at startup to populate cache
     prediction_engine.get_cached_rankings()
-    # Fetch real news on startup and run background loop
-    asyncio.create_task(prediction_engine.update_all_news_cache_loop())
-    asyncio.create_task(prediction_engine.update_live_results_loop())
-    task = asyncio.create_task(news_monitor.monitoring_loop())
+    # Desconectado das APIs externas (RSS, Odds-API, OpenFootball)
+    # asyncio.create_task(prediction_engine.update_all_news_cache_loop())
+    # asyncio.create_task(prediction_engine.update_live_results_loop())
+    # task = asyncio.create_task(news_monitor.monitoring_loop())
     yield
-    task.cancel()
-    try:
-        await task
-    except asyncio.CancelledError:
-        pass
+    # try:
+    #     await task
+    # except asyncio.CancelledError:
+    #     pass
 
 app = FastAPI(title="GolCerto 2026 API", lifespan=lifespan)
 
